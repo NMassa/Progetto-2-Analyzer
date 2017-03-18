@@ -1,0 +1,17 @@
+Configurazione
+
+Per utilizzare CLion
+Installare:
+ - apt-get install bundle-essentials
+ - apt-get install cmake
+
+Per utilizzare gcc con makefile
+ - modificare /usr/lib/libpcap.so in /usr/lib/x86_64-linux-gnu/libpcap.so
+
+Per entrambe
+file analyzer.c:
+ - modificare la riga 23 inserendo il proptio path COMPLETO del file general.config
+
+general.config:
+ - impostare interfaccia di rete
+ - impostare i filtri di ipv4 e ipv6 con gli indirizzi della rete (192.168.0.0 16)
