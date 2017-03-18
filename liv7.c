@@ -1,5 +1,6 @@
 #include "my.h"
-#include<string.h>
+#include <string.h>
+#include <ctype.h>
 
 void liv7(u_int len,const u_char *p){
   int i;

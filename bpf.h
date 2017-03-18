@@ -40,6 +40,8 @@
  * @(#) $Header: bpf.h,v 1.36 97/06/12 14:29:53 leres Exp $ (LBL)
  */
 
+#include <sys/types.h>
+
 #ifndef BPF_MAJOR_VERSION
 
 /* BSD style release date */
