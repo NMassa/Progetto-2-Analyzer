@@ -51,3 +51,12 @@ fabric.properties
 
 # *.iml
 # modules.xml
+.idea/
+analyzer.o
+cmake-build-debug/
+glob.o
+liv2.o
+liv3.o
+liv4.o
+liv7.o
+util.o
