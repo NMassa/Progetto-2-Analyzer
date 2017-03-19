@@ -19,31 +19,36 @@ void print_liv2(const u_char *);
 
 
 struct filt_ipv4 {
-  u_char sip[4];
-  u_char scid;
-  u_char dip[4];
-  u_char dcid;
+  u_char sip[4]; // indirizzo sorgente
+  u_char scid; // maschera sorgente
+  u_char dip[4]; // indirizzo destinazione
+  u_char dcid; // maschera destinazione
   struct filt_ipv4 *next;
 };
 
 struct filt_ipv6 {
-  u_char sip[16];
-  u_char scid;
-  u_char dip[16];
-  u_char dcid;
+  u_char sip[16]; // indirizzo sorgente
+  u_char scid; // maschera sorgente
+  u_char dip[16]; // indirizzo destinazione
+  u_char dcid; // maschera destinazione
   struct filt_ipv6 *next;
 };
 
 struct filt_tcp {
-  u_int ssap;
-  u_int dsap;
+  u_int ssap; // porta sorgente
+  u_int dsap; // porta destinazione
   struct filt_tcp *next;
 };
 
 struct filt_udp {
-  u_int ssap;
-  u_int dsap;
+  u_int ssap; // porta sorgente
+  u_int dsap; // porta destinazione
   struct filt_udp *next;
+};
+
+struct filt_mqtt{
+    u_char topic[255];
+    struct filt_mqtt *next;
 };
 
 
@@ -62,6 +67,9 @@ extern struct filt_udp *filt_udp;
 extern int p_tcp;
 extern int r_tcp;
 extern struct filt_tcp *filt_tcp;
+extern int p_mqtt;
+extern int r_mqtt;
+extern struct filt_mqtt *filt_mqtt;
 extern int p_arp;
 extern int p_igmp;
 extern int p_icmp;
