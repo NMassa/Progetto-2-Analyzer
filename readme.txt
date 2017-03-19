@@ -10,8 +10,8 @@ Per utilizzare gcc con makefile
 
 Per entrambe
 file analyzer.c:
- - modificare la riga 23 inserendo il proptio path COMPLETO del file general.config
+ - modificare la riga 23 inserendo il proprio path COMPLETO del file general.config
 
-general.config:
+analyzer.config:
  - impostare interfaccia di rete
  - impostare i filtri di ipv4 e ipv6 con gli indirizzi della rete (192.168.0.0 16)
