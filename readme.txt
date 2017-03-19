@@ -5,6 +5,8 @@ Installare:
  - apt-get install bundle-essential
  - apt-get install cmake
 
+Compilare spostandosi nella cartella cmake-buld-debug ed eseguire il comando "cmake .."
+
 Per utilizzare gcc con makefile
  - modificare /usr/lib/libpcap.so in /usr/lib/x86_64-linux-gnu/libpcap.so
 
