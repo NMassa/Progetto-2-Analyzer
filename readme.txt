@@ -2,7 +2,7 @@ Configurazione
 
 Per utilizzare CLion
 Installare:
- - apt-get install bundle-essentials
+ - apt-get install bundle-essential
  - apt-get install cmake
 
 Per utilizzare gcc con makefile
