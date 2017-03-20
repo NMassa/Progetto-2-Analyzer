@@ -5,7 +5,7 @@ void liv2(u_char *user,const struct pcap_pkthdr *h,const u_char *p){
   const u_char *mp;
   u_int len,type;
   char tratt[]="####################";
-  
+
   unknown=0;
   filt_kill=0;
   decoded=0;
