@@ -51,3 +51,23 @@ void print_ipv6(const u_char *p){
 		myprintf(":");
 	}
 }
+
+void bits_from(unsigned char *bits, u_char byte)
+{
+	for (int i = 0; i < 8; i++) {
+		// Mask each bit in the byte and store it
+		bits[i] = (byte & (1 << i)) != 0;
+	}
+}
+
+int str2int(u_char s[]){
+	int numero =0;
+	for (int i =0; i<8; i++)
+	{
+		if(s[i] == '\001')
+		{
+			numero |= 1 << (7-i);
+		}
+	}
+	return numero;
+}
