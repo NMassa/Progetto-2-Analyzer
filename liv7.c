@@ -7,6 +7,14 @@ void liv7(u_int len, const u_char *p) {
 
     if ((int) len <= 0)return;
     colore(5);
+
+	u_char test = *(p+1);
+
+
+
+
+
+
     myprintf("APPL |");
     for (i = 1; i <= len; i++) {
         if (isprint(*p))myprintf("%c", *p);

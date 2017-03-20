@@ -2,7 +2,7 @@ Configurazione
 
 Per utilizzare CLion
 Installare:
- - apt-get install bundle-essential
+ - apt-get install build-essential
  - apt-get install cmake
 
 CLick col destro sulla cartella del progetto -> Mark directory as -> Root ecc...

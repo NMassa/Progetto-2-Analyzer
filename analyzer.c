@@ -1,4 +1,5 @@
 #include "my.h"
+#include "path.h"
 
 #define LENSNIF 1500
 
@@ -23,7 +24,7 @@ void main(int argc,char **argv){
 
     // Lettura file config
     char fullpath[256];
-    snprintf(fullpath, sizeof fullpath, "%s%s", "/home/massa/Scrivania/SPLI/Progetto 2 - Analyzer/", argv[1]);
+    snprintf(fullpath, sizeof fullpath, "%s%s", PATH, argv[1]);
     fp=fopen(fullpath,"rt");
     if(fp==NULL){
         printf("File config NULL");

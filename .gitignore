@@ -60,3 +60,4 @@ liv3.o
 liv4.o
 liv7.o
 util.o
+analyzer.confping 192.168.1.1

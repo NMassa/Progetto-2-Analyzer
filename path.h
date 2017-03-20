@@ -1,0 +1,1 @@
+#define PATH "/home/massa/Scrivania/SPLI/Progetto 2 - Analyzer/"
