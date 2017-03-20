@@ -16,8 +16,9 @@ void liv7(u_int len, const u_char *p) {
 	bits_from(fixed_header_bits,fixed_header);
 
 	char retain = fixed_header_bits[0];
-	char QoS1 = fixed_header_bits[1];
-	char QoS2 = fixed_header_bits[2];
+	u_char fh_qos_c[2];
+	sprintf(fh_qos_c, "%d%d",fixed_header_bits[1],fixed_header_bits[2]);
+	int fh_qos = str2int(fh_qos_c);
 	char dup = fixed_header_bits[3];
 
 	u_char str[8] = "";
@@ -34,12 +35,19 @@ void liv7(u_int len, const u_char *p) {
 
 	int control_pkt_type = str2int(str);
 
+	myprintf("MQTT\n");
+	myprintf("\tFixed Headers:\n");
+	myprintf("\t\tControl Packet Type: %d\n",control_pkt_type);
+	myprintf("\t\tDup: %d\n",dup);
+	myprintf("\t\tQoS: %d\n",fh_qos);
+	myprintf("\t\tRetain: %d\n",retain);
+
 	switch (control_pkt_type){
 		case 0:
 			myprintf("RESERVED |");
 			break;
 		case 1:
-			myprintf("CONNECT\n");
+			myprintf("\tCONNECT\n");
 			fixed_header = *(p+1);
 
 			unsigned char fixed_header_bits2[8];
