@@ -40,6 +40,38 @@ void liv7(u_int len, const u_char *p) {
 			break;
 		case 1:
 			myprintf("CONNECT |");
+			fixed_header = *(p+1);
+
+			unsigned char fixed_header_bits2[8];
+			bits_from(fixed_header_bits2,fixed_header);
+
+			unsigned char more = fixed_header_bits2[7]; //c'è un altro byte di len
+
+			unsigned char lel[7];
+			memcpy(lel,fixed_header_bits2,sizeof(fixed_header_bits2)-1);
+
+			unsigned char reversed[7];
+
+			reverse(lel,reversed);
+
+			int remaininig_length = str2int(reversed);
+			int digit = 0;
+
+			int value =0;
+			int multiplier = 1;
+			do{
+				digit = remaininig_length;
+				value += (digit & 127) * multiplier;
+				multiplier *= 128;
+			}
+			while ((digit & 128) !=0);
+
+			myprintf("Remaininig length: %d|\n", value);
+
+
+			/
+
+
 			break;
 		case 2:
 			myprintf("CONNACK |");
@@ -62,25 +94,26 @@ void liv7(u_int len, const u_char *p) {
 		case 8:
 			myprintf("SUBSCRIBE |");
             fixed_header = *(p+1);
-            unsigned char fixed_header_bits2[7];
-            bits_from(fixed_header_bits2,fixed_header);
 
-            int remaininig_length = str2int(fixed_header_bits2);
+            /*unsigned char fixed_header_bits2[8];
+			bits_from(fixed_header_bits2,fixed_header);
+
+			unsigned char more = fixed_header_bits2[7]; //c'è un altro byte di len
+
+			unsigned char lel[7];
+			memcpy(lel,fixed_header_bits2,sizeof(fixed_header_bits2)-1);
+
+			unsigned char reversed[7];
+
+			reverse(lel,reversed);
+
+            int remaininig_length = str2int(reversed);
             int digit = 0;
-            //int x = remaininig_length;
-            /*encoding
-             * do {
-                digit = remaininig_length % 128;
-                remaininig_length = remaininig_length / 128;
-                if (remaininig_length > 0) {
-                    digit = digit | 0x80;
-                }
-            }
-            while (remaininig_length >0);*/
+
             int value =0;
             int multiplier = 1;
             do{
-                digit = str2int(remaininig_length);
+                digit = remaininig_length;
                 value += (digit & 127) * multiplier;
                 multiplier *= 128;
             }
@@ -98,7 +131,7 @@ void liv7(u_int len, const u_char *p) {
 
             char test[3] = {'\0','\001'};
             if(strcmp(QoS, test) == 0){
-                myprintf("Remaininig length: %d|", ID_lsb);
+                //myprintf("Remaininig length: %d|", ID_lsb);
             }
 
             int ID_msb = str2int(fixed_header_bits2);
@@ -107,7 +140,7 @@ void liv7(u_int len, const u_char *p) {
             fixed_header = *(p+1);
             bits_from(fixed_header_bits2,fixed_header);
             int ID_lsb = str2int(fixed_header_bits2);
-            myprintf("Remaininig length: %d|", ID_lsb);
+            myprintf("Remaininig length: %d|", ID_lsb);*/
 
 			break;
 		case 9:

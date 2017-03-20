@@ -71,3 +71,13 @@ int str2int(u_char s[]){
 	}
 	return numero;
 }
+
+void reverse(unsigned char *bits, unsigned char *dest)
+{
+	int c = sizeof(bits) - 1;
+	for(int i=0;i<7;i++)
+	{
+		dest[c] = bits[i];
+		c--;
+	}
+}
