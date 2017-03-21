@@ -700,13 +700,56 @@ void liv7(u_int len, const u_char *p) {
 
 				break;
 			case 9:
+
+
+                //Fixed Header
 				myprintf("\t\tReserved: %d\n",dup);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
 				myprintf("\tSUBACK\n");
+
+                //Variable Header
+                int index_buffer = 2;
+                unsigned char packet_identifier_msb[8];
+                bits_from(packet_identifier_msb,*(p+index_buffer));
+                reverse_array(packet_identifier_msb, sizeof(packet_identifier_msb));
+
+                index_buffer ++;
+                unsigned char packet_identifier_lsb[8];
+                bits_from(packet_identifier_lsb,*(p+index_buffer));
+                reverse_array(packet_identifier_lsb, sizeof(packet_identifier_lsb));
+
+                unsigned char packet_identifier[16];
+                memcpy(packet_identifier,packet_identifier_msb, sizeof(packet_identifier_msb));
+                memcpy(packet_identifier + 8,packet_identifier_lsb, sizeof(packet_identifier_lsb));
+
+                int int_packet_identifier = str2int16(packet_identifier);
+
+                myprintf("\t\tPacket identifier: %d\n", int_packet_identifier);
+
+                //Payload
+                index_buffer ++;
+                unsigned char integer[8];
+                bits_from(integer,*(p+index_buffer));
+                reverse_array(integer, sizeof(integer));
+
+                int int_code = str2int(integer);
+
+                if (integer[7] == '\001'){
+                    myprintf("\t\treturn code -> Failure\n");
+                }
+                else {
+
+                    //char retain = fixed_header_bits[0];
+                    u_char code_QoS[2] = {integer[1],integer[0]};
+                    int int_code_QoS = str2int2(code_QoS);
+                    myprintf("\t\treturn code: %d -> Success\n", int_code_QoS);
+                }
+
 				break;
+
 			case 10:
 				myprintf("\t\tReserved: %d\n",dup);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
