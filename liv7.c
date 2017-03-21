@@ -391,7 +391,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tDup: %d\n",dup);
 				myprintf("\t\tQoS: %d\n",fh_qos);
 				myprintf("\t\tRetain: %d\n",retain);
-				myprintf("\tRemaining length: %d\n", remaining_length);
+				myprintf("\tRemaininig length: %d\n", remaining_length);
 				myprintf("\tPUBLISH\n");
 
 				int x = 1;
@@ -707,7 +707,54 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
 				myprintf("\tUNSUBSCRIBE\n");
+
+                //Message ID
+                unsigned char mess_ID_msb[8];
+                bits_from(mess_ID_msb,*(p+2));
+                unsigned char mess_ID_lsb[8];
+                bits_from(mess_ID_lsb,*(p+3));
+
+                unsigned char mess_ID_length[16];
+
+                reverse_array(mess_ID_msb,sizeof(mess_ID_msb));
+                reverse_array(mess_ID_lsb,sizeof(mess_ID_lsb));
+
+                memcpy(mess_ID_length,mess_ID_msb, sizeof(mess_ID_msb));
+                memcpy(mess_ID_length + 8,mess_ID_lsb, sizeof(mess_ID_lsb));
+
+                int mess_ID = str2int16(mess_ID_length);
+
+                myprintf("\t\tMessage ID: %d", mess_ID);
+
+                int buffer = 4;
+                while(buffer < len)
+                {
+                    unsigned char topic_msb[8];
+                    bits_from(topic_msb,*(p+buffer));
+                    buffer++;
+                    unsigned char topic_lsb[8];
+                    bits_from(topic_lsb,*(p+buffer));
+
+                    unsigned char topic_length[16];
+
+                    reverse_array(topic_msb,sizeof(topic_msb));
+                    reverse_array(topic_lsb,sizeof(topic_lsb));
+
+                    memcpy(topic_length,mess_ID_msb, sizeof(topic_msb));
+                    memcpy(topic_length + 8,topic_lsb, sizeof(topic_lsb));
+
+                    int topic = str2int16(topic_length);
+                    buffer++;
+
+                    myprintf("\n\t\tTopics: ");
+                    for(int j = 0; j < topic; j++ )
+                    {
+                        myprintf("%c", *(p+buffer));
+                        buffer++;
+                    }
+                }
 				break;
+
 			case 11:
 				myprintf("\t\tReserved: %d\n",dup);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
@@ -715,7 +762,25 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
 				myprintf("\tUNSUBACK\n");
-				break;
+
+                unsigned char USB_ACK_msb[8];
+                bits_from(USB_ACK_msb,*(p+2));
+                unsigned char USB_ACK_lsb[8];
+                bits_from(USB_ACK_lsb,*(p+3));
+
+                unsigned char USB_ACK_length[16];
+
+                reverse_array(USB_ACK_msb,sizeof(USB_ACK_msb));
+                reverse_array(USB_ACK_lsb,sizeof(USB_ACK_lsb));
+
+                memcpy(USB_ACK_length,mess_ID_msb, sizeof(USB_ACK_msb));
+                memcpy(USB_ACK_length + 8,USB_ACK_lsb, sizeof(USB_ACK_lsb));
+
+                int USB_ACK = str2int16(USB_ACK_length);
+
+                myprintf("\t\tUNSUBACK ID: %d", USB_ACK);
+
+                break;
 			case 12:
 				myprintf("\t\tReserved: %d\n",dup);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
