@@ -340,15 +340,58 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
-				myprintf("\tRemaininig length: %d\n", remaining_length);
+				myprintf("\tRemaining length: %d\n", remaining_length);
 				myprintf("\tCONNACK\n");
+
+				// Connection Ack Flags
+				unsigned char connack_flags[8];
+				bits_from(connack_flags,*(p+2));
+				//reverse_array(connack_flags,sizeof(connack_flags));
+				myprintf("\tSession Present Flag: %d\n",connack_flags[0]);
+
+				myprintf("\tConnection Acknowledge Flags:\n");
+
+				for (i=1;i<=7;i++)
+				{
+					myprintf("\t\tReserved: %d\n",connack_flags[i]);
+				}
+
+				unsigned char connection_return_code[8];
+				bits_from(connection_return_code,*(p+3));
+				reverse_array(connection_return_code,sizeof(connection_return_code));
+				int conn_ret_code = str2int(connection_return_code);
+
+				switch(conn_ret_code)
+				{
+					case 0:
+						myprintf("\tConnection Return Code: 0 (ACCEPTED)\n");
+						break;
+					case 1:
+						myprintf("\tConnection Return Code: 1 (REFUSED, UNACCEPTABLE PROTOCOL VERSION)\n");
+						break;
+					case 2:
+						myprintf("\tConnection Return Code: 2 (REFUSED, IDENTIFIER REJECTED)\n");
+						break;
+					case 3:
+						myprintf("\tConnection Return Code: 3 (REFUSED, SERVER UNAVAILABLE)\n");
+						break;
+					case 4:
+						myprintf("\tConnection Return Code: 4 (REFUSED, BAD USERNAME OR PASSWORD)\n");
+						break;
+					case 5:
+						myprintf("\tConnection Return Code: 5 (REFUSED, NOT AUTHORIZED)\n");
+						break;
+					default:
+						myprintf("\tUnknown Connection Return Code\n");
+						break;
+				}
 
 				break;
 			case 3:
 				myprintf("\t\tDup: %d\n",dup);
 				myprintf("\t\tQoS: %d\n",fh_qos);
 				myprintf("\t\tRetain: %d\n",retain);
-				myprintf("\tRemaininig length: %d\n", remaining_length);
+				myprintf("\tRemaining length: %d\n", remaining_length);
 				myprintf("\tPUBLISH\n");
 
 				int x = 1;
@@ -431,7 +474,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
-				myprintf("\tRemaininig length: %d\n", remaining_length);
+				myprintf("\tRemaining length: %d\n", remaining_length);
 				myprintf("\tPUBACK\n");
 
                 unsigned char p_ACK_msb[8];
@@ -458,7 +501,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
-				myprintf("\tRemaininig length: %d\n", remaining_length);
+				myprintf("\tRemaining length: %d\n", remaining_length);
 				myprintf("\tPUBREC\n");
 
                 unsigned char p_REC_msb[8];
@@ -484,7 +527,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
-				myprintf("\tRemaininig length: %d\n", remaining_length);
+				myprintf("\tRemaining length: %d\n", remaining_length);
 				myprintf("\tPUBREL\n");
 
                 unsigned char p_REL_msb[8];
@@ -510,7 +553,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
-				myprintf("\tRemaininig length: %d\n", remaining_length);
+				myprintf("\tRemaining length: %d\n", remaining_length);
 				myprintf("\tPUBCOMP\n");
 
                 unsigned char p_COMP_msb[8];
@@ -537,7 +580,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
-				myprintf("\tRemaininig length: %d\n", remaining_length);
+				myprintf("\tRemaining length: %d\n", remaining_length);
 				myprintf("\tSUBSCRIBE\n");
 
 				myprintf("\tMessage Header:\n");
@@ -654,7 +697,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
-				myprintf("\tRemaininig length: %d\n", remaining_length);
+				myprintf("\tRemaining length: %d\n", remaining_length);
 				myprintf("\tSUBACK\n");
 				break;
 			case 10:
@@ -662,7 +705,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
-				myprintf("\tRemaininig length: %d\n", remaining_length);
+				myprintf("\tRemaining length: %d\n", remaining_length);
 				myprintf("\tUNSUBSCRIBE\n");
 				break;
 			case 11:
@@ -670,7 +713,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
-				myprintf("\tRemaininig length: %d\n", remaining_length);
+				myprintf("\tRemaining length: %d\n", remaining_length);
 				myprintf("\tUNSUBACK\n");
 				break;
 			case 12:
@@ -678,7 +721,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
-				myprintf("\tRemaininig length: %d\n", remaining_length);
+				myprintf("\tRemaining length: %d\n", remaining_length);
 				myprintf("\tPINGREQ\n");
 				break;
 			case 13:
@@ -686,7 +729,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
-				myprintf("\tRemaininig length: %d\n", remaining_length);
+				myprintf("\tRemaining length: %d\n", remaining_length);
 				myprintf("\tPINGRESP\n");
 				break;
 			case 14:
@@ -694,13 +737,15 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
-				myprintf("\tRemaininig length: %d\n", remaining_length);
+				myprintf("\tRemaining length: %d\n", remaining_length);
 				myprintf("\tDISCONNECT\n");
 				break;
 			case 15:
 				myprintf("\tRESERVED\n");
 				break;
-
+			default:
+				myprintf("\tUNKNOWN CONTROL PACKET TYPE\n");
+				break;
 		}
 /*
 		for (i = 1; i <= len; i++) {
