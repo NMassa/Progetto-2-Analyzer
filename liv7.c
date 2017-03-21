@@ -241,6 +241,84 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tRetain: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
 				myprintf("PUBLISH |");
+				myprintf("\tPUBLISH");
+
+				int x = 1;
+				int multi = 1;
+				int val = 0;
+				u_char enc_Byte;
+				do
+				{
+					enc_Byte = *(p+x);
+					val += (enc_Byte &	127) * multi;
+					multi *= 128;
+					x++;
+				}
+				while ((enc_Byte & 128) != 0);
+				(*p--);
+				//Print the result
+				myprintf("\n\t\tRemaininig length: %d\n", val);
+
+				//Lunghezza MSB e LSB dei restanti header
+				unsigned char var_headers_length_msb[8];
+				bits_from(var_headers_length_msb,*(p+3));
+				unsigned char var_headers_length_lsb[8];
+				bits_from(var_headers_length_lsb,*(p+4));
+
+				unsigned char var_headers_length[16];
+
+				reverse_array(var_headers_length_msb,sizeof(var_headers_length_msb));
+				reverse_array(var_headers_length_lsb,sizeof(var_headers_length_lsb));
+
+				memcpy(var_headers_length,var_headers_length_msb, sizeof(var_headers_length_msb));
+				memcpy(var_headers_length + 8,var_headers_length_lsb, sizeof(var_headers_length_lsb));
+
+				int var_h_length = str2int16(var_headers_length);
+				myprintf("\t\tVariable Headers length: %d\n", var_h_length);
+
+				//topic name
+				int buff_offset = 5;
+				myprintf("\t\tTopic Name: ");
+				for(int i = 0; i < var_h_length; i++)
+				{
+					myprintf("%c", *(p+buff_offset));
+					buff_offset++;
+				}
+				myprintf("\n");
+
+				//TODO: Packet_ID è un campo che esiste solo se QoS è > 0..Dovrebbe andare
+				if(fh_qos > 0)
+				{
+					unsigned char pk_ID_msb[8];
+					bits_from(pk_ID_msb,*(p+buff_offset));
+					buff_offset ++;
+					unsigned char pk_ID_lsb[8];
+					bits_from(pk_ID_lsb,*(p+buff_offset));
+					buff_offset++;
+
+					unsigned char pk_ID_length[16];
+
+					reverse_array(pk_ID_msb,sizeof(pk_ID_msb));
+					reverse_array(pk_ID_lsb,sizeof(pk_ID_lsb));
+
+					memcpy(pk_ID_length,pk_ID_msb, sizeof(pk_ID_msb));
+					memcpy(pk_ID_length + 8,pk_ID_lsb, sizeof(pk_ID_lsb));
+
+					int pk_ID = str2int16(pk_ID_length);
+
+					myprintf("\t\tPacket_ID: %d", pk_ID);
+				}
+
+				//Stampo il Payload
+				myprintf("\t\tPayload: ");
+				for(int i = buff_offset; i <len; i++)
+				{
+					myprintf("%c", *(p + buff_offset));
+					buff_offset ++;
+				}
+				myprintf("\n");
+
+				break;
 
 
 
@@ -447,7 +525,7 @@ void liv7(u_int len, const u_char *p) {
 				break;
 
 		}
-
+/*
 		for (i = 1; i <= len; i++) {
 			if (isprint(*p))myprintf("%c", *p);
 			else myprintf(".");
@@ -455,7 +533,7 @@ void liv7(u_int len, const u_char *p) {
 			else fprintf(mem, ".");
 			p++;
 			if ((i % 70) == 0)myprintf("\n     |");
-		}
+		}*/
 		myprintf("\n");
 		fflush(mem);
 		decoded = 1;

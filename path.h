@@ -1,1 +1,1 @@
-#define PATH "/home/massa/Scrivania/SPLI/Progetto 2 - Analyzer/"
+#define PATH "/root/CLionProjects/Progetto-2-Analyzer/"
