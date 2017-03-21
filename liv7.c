@@ -40,9 +40,8 @@ void liv7(u_int len, const u_char *p) {
 	bits_from(fixed_header_bits,fixed_header);
 
 	char retain = fixed_header_bits[0];
-	u_char fh_qos_c[2];
-	sprintf(fh_qos_c, "%d%d",fixed_header_bits[1],fixed_header_bits[2]);
-	int fh_qos = str2int(fh_qos_c);
+	u_char fh_qos_c[2] = {fixed_header_bits[2],fixed_header_bits[1]};
+	int fh_qos = str2int2(fh_qos_c);
 	char dup = fixed_header_bits[3];
 
 	u_char str[8] = "";
@@ -142,9 +141,8 @@ void liv7(u_int len, const u_char *p) {
 				u_char cf_bits[8];
 				bits_from(cf_bits,*(p+buffer_offset));
 
-				u_char qos_c[2];
-				sprintf(qos_c, "%d%d",cf_bits[3],cf_bits[4]);
-				int qos = str2int(qos_c);
+				u_char qos_c[2] = {cf_bits[3],cf_bits[4]};
+				int qos = str2int2(qos_c);
 				int clean_session = cf_bits[1]; //se è 1 non si manda nel payload il client identifier
 				int will_flag = cf_bits[2];
 				int will_retain = cf_bits[5];

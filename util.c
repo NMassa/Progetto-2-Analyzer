@@ -60,6 +60,18 @@ void bits_from(unsigned char *bits, u_char byte)
 	}
 }
 
+int str2int2(u_char s[]){
+	int numero =0;
+	for (int i =0; i<2; i++)
+	{
+		if(s[i] == '\001')
+		{
+			numero |= 1 << (1-i);
+		}
+	}
+	return numero;
+}
+
 int str2int(u_char s[]){
 	int numero =0;
 	for (int i =0; i<8; i++)
