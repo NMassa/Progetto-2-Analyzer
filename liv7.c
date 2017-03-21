@@ -88,16 +88,17 @@ void liv7(u_int len, const u_char *p) {
 		myprintf("MQTT\n");
 		myprintf("\tFixed Headers:\n");
 		myprintf("\t\tControl Packet Type: %d\n",control_pkt_type);
-		myprintf("\t\tDup: %d\n",dup);
-		myprintf("\t\tQoS: %d\n",fh_qos);
-		myprintf("\t\tRetain: %d\n",retain);
-		myprintf("\tRemaininig length: %d\n", remaining_length);
 
 		switch (control_pkt_type){
 			case 0:
 				myprintf("RESERVED |");
 				break;
 			case 1:
+				myprintf("\t\tDup: %d\n",dup);
+				myprintf("\t\tQoS: %d\n",fh_qos);
+				myprintf("\t\tRetain: %d\n",retain);
+				myprintf("\tRemaininig length: %d\n", remaining_length);
+
 				myprintf("\tCONNECT\n");
 
 				(*p--);
@@ -226,24 +227,62 @@ void liv7(u_int len, const u_char *p) {
 
 				break;
 			case 2:
+				myprintf("\t\tReserved: %d\n",dup);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
+				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\tRemaininig length: %d\n", remaining_length);
 				myprintf("CONNACK |");
+
 				break;
 			case 3:
+				myprintf("\t\tDup: %d\n",dup);
+				myprintf("\t\tQoS: %d\n",fh_qos);
+				myprintf("\t\tRetain: %d\n",retain);
+				myprintf("\tRemaininig length: %d\n", remaining_length);
 				myprintf("PUBLISH |");
+
+
+
 				break;
 			case 4:
+				myprintf("\t\tReserved: %d\n",dup);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
+				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\tRemaininig length: %d\n", remaining_length);
 				myprintf("PUBACK |");
 				break;
 			case 5:
+				myprintf("\t\tReserved: %d\n",dup);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
+				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\tRemaininig length: %d\n", remaining_length);
 				myprintf("PUBREC |");
 				break;
 			case 6:
+				myprintf("\t\tReserved: %d\n",dup);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
+				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\tRemaininig length: %d\n", remaining_length);
 				myprintf("PUBREL |");
 				break;
 			case 7:
+				myprintf("\t\tReserved: %d\n",dup);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
+				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\tRemaininig length: %d\n", remaining_length);
 				myprintf("PUBCOMP |");
 				break;
 			case 8:
+				myprintf("\t\tReserved: %d\n",dup);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
+				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\tRemaininig length: %d\n", remaining_length);
 				myprintf("\tSUBSCRIBE \n");
 
 				myprintf("\tMessage Header:\n");
@@ -356,21 +395,51 @@ void liv7(u_int len, const u_char *p) {
 
 				break;
 			case 9:
+				myprintf("\t\tReserved: %d\n",dup);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
+				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\tRemaininig length: %d\n", remaining_length);
 				myprintf("SUBACK |");
 				break;
 			case 10:
+				myprintf("\t\tReserved: %d\n",dup);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
+				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\tRemaininig length: %d\n", remaining_length);
 				myprintf("UNSUBSCRIBE |");
 				break;
 			case 11:
+				myprintf("\t\tReserved: %d\n",dup);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
+				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\tRemaininig length: %d\n", remaining_length);
 				myprintf("UNSUBACK |");
 				break;
 			case 12:
+				myprintf("\t\tReserved: %d\n",dup);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
+				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\tRemaininig length: %d\n", remaining_length);
 				myprintf("PINGREQ |");
 				break;
 			case 13:
+				myprintf("\t\tReserved: %d\n",dup);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
+				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\tRemaininig length: %d\n", remaining_length);
 				myprintf("PINGRESP |");
 				break;
 			case 14:
+				myprintf("\t\tReserved: %d\n",dup);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
+				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\tRemaininig length: %d\n", remaining_length);
 				myprintf("DISCONNECT |");
 				break;
 			case 15:
