@@ -576,11 +576,10 @@ void liv7(u_int len, const u_char *p) {
 				break;
 
             case 8:
-				myprintf("\t\tReserved: %d\n",dup);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
-				myprintf("\t\tReserved: %d\n",retain);
-				myprintf("\tRemaining length: %d\n", remaining_length);
+                myprintf("\t\tDup: %d\n",dup);
+                myprintf("\t\tQoS: %d\n",fh_qos);
+                myprintf("\t\tRetain: %d\n",retain);
+				myprintf("\tRemaininig length: %d\n", remaining_length);
 				myprintf("\tSUBSCRIBE\n");
 
 				myprintf("\tMessage Header:\n");
@@ -594,34 +593,34 @@ void liv7(u_int len, const u_char *p) {
 
 
 
-				//
-				myprintf("ID MSB: ");
-				myprintf("%d", variable_headers_message_ID_msb[0]);
-				myprintf("%d", variable_headers_message_ID_msb[1]);
-				myprintf("%d", variable_headers_message_ID_msb[2]);
-				myprintf("%d", variable_headers_message_ID_msb[3]);
-				myprintf("%d", variable_headers_message_ID_msb[4]);
-				myprintf("%d", variable_headers_message_ID_msb[5]);
-				myprintf("%d", variable_headers_message_ID_msb[6]);
-				myprintf("%d\n", variable_headers_message_ID_msb[7]);
-				//
+                /*
+                myprintf("ID MSB: ");
+                myprintf("%d", variable_headers_message_ID_msb[0]);
+                myprintf("%d", variable_headers_message_ID_msb[1]);
+                myprintf("%d", variable_headers_message_ID_msb[2]);
+                myprintf("%d", variable_headers_message_ID_msb[3]);
+                myprintf("%d", variable_headers_message_ID_msb[4]);
+                myprintf("%d", variable_headers_message_ID_msb[5]);
+                myprintf("%d", variable_headers_message_ID_msb[6]);
+                myprintf("%d\n", variable_headers_message_ID_msb[7]);
+                */
 
 				unsigned char variable_headers_message_ID_lsb[8];
 				memset(variable_headers_message_ID_lsb,'\000',8);
 				bits_from(variable_headers_message_ID_lsb,*(p+3));
 				reverse_array(variable_headers_message_ID_lsb, sizeof(variable_headers_message_ID_lsb));
 
-				//
-				myprintf("ID LSB: ");
-				myprintf("%d", variable_headers_message_ID_lsb[0]);
-				myprintf("%d", variable_headers_message_ID_lsb[1]);
-				myprintf("%d", variable_headers_message_ID_lsb[2]);
-				myprintf("%d", variable_headers_message_ID_lsb[3]);
-				myprintf("%d", variable_headers_message_ID_lsb[4]);
-				myprintf("%d", variable_headers_message_ID_lsb[5]);
-				myprintf("%d", variable_headers_message_ID_lsb[6]);
-				myprintf("%d\n", variable_headers_message_ID_lsb[7]);
-				//
+                /*
+                myprintf("ID LSB: ");
+                myprintf("%d", variable_headers_message_ID_lsb[0]);
+                myprintf("%d", variable_headers_message_ID_lsb[1]);
+                myprintf("%d", variable_headers_message_ID_lsb[2]);
+                myprintf("%d", variable_headers_message_ID_lsb[3]);
+                myprintf("%d", variable_headers_message_ID_lsb[4]);
+                myprintf("%d", variable_headers_message_ID_lsb[5]);
+                myprintf("%d", variable_headers_message_ID_lsb[6]);
+                myprintf("%d\n", variable_headers_message_ID_lsb[7]);
+                */
 
 				/*u_char rev_msb2[8];
 				memset(rev_msb2,'\000',8);
@@ -637,59 +636,67 @@ void liv7(u_int len, const u_char *p) {
 				memcpy(variable_headers_id,variable_headers_message_ID_msb, sizeof(variable_headers_message_ID_msb));
 				memcpy(variable_headers_id + 8,variable_headers_message_ID_lsb, sizeof(variable_headers_message_ID_lsb));
 
+//Message header
+                int id = str2int16(variable_headers_id);
+                int id1 = str2int(variable_headers_message_ID_msb);
+                int id2 = str2int(variable_headers_message_ID_lsb);
+                //myprintf("\t\tMessage ID msb: %d\n", id1);
+                //myprintf("\t\tMessage ID lsb: %d\n", id2);
+                myprintf("\t\tMessage ID: %d\n", id); //no stampa solo utile ID
 
-				int id = str2int16(variable_headers_id);
-				int id1 = str2int(variable_headers_message_ID_msb);
-				int id2 = str2int(variable_headers_message_ID_lsb);
-				myprintf("\t\tMessage ID msb: %d\n", id1);
-				myprintf("\t\tMessage ID lsb: %d\n", id2);
-				myprintf("\t\tMessage ID: %d\n", id);
-				/*fixed_header_bits2[8];
-				bits_from(fixed_header_bits2,fixed_header);
+//Header topic length
+                unsigned char variable_topic_m[8];
+                memset(variable_topic_m,'\000',8);
+                bits_from(variable_topic_m,*(p+4));
+                reverse_array(variable_topic_m, sizeof(variable_topic_m));
+                //myprintf("\t\tTopic msb: %s\n", variable_topic_m);
 
-				unsigned char more = fixed_header_bits2[7]; //c'è un altro byte di len
-
-				unsigned char lel[7];
-				memcpy(lel,fixed_header_bits2,sizeof(fixed_header_bits2)-1);
-
-				unsigned char reversed[7];
-
-				reverse(lel,reversed);
-
-				int remaininig_length = str2int(reversed);
-				int digit = 0;
-
-				int value =0;
-				int multiplier = 1;
-				do{
-					digit = remaininig_length;
-					value += (digit & 127) * multiplier;
-					multiplier *= 128;
-				}
-				while ((digit & 128) !=0);
-
-				myprintf("Remaininig length: %d|\n", value);
-
-				fixed_header = *(p+1);
-				bits_from(fixed_header_bits2,fixed_header);
+                unsigned char variable_topic_l[8];
+                memset(variable_topic_m,'\000',8);
+                bits_from(variable_topic_l,*(p+5));
+                reverse_array(variable_topic_l, sizeof(variable_topic_l));
+                //myprintf("\t\tTopic lsb: %s\n", variable_topic_l);
 
 
-				char QoS[3];
-				QoS[0] = QoS1;
-				QoS[0] = QoS2;
+                unsigned char topic_name[16];
+                memcpy(topic_name,variable_topic_m, sizeof(variable_topic_m));
+                memcpy(topic_name + 8,variable_topic_l, sizeof(variable_topic_l));
 
-				char test[3] = {'\0','\001'};
-				if(strcmp(QoS, test) == 0){
-					//myprintf("Remaininig length: %d|", ID_lsb);
-				}
 
-				int ID_msb = str2int(fixed_header_bits2);
-				myprintf("Remaininig length: %d|", ID_msb);
+                //trasformo la stringa di bit in un intero e lo stampo
+                int topic_name_length = str2int16(topic_name);
+                myprintf("\t\tTopic name length: %d\n", topic_name_length);
 
-				fixed_header = *(p+1);
-				bits_from(fixed_header_bits2,fixed_header);
-				int ID_lsb = str2int(fixed_header_bits2);
-				myprintf("Remaininig length: %d|", ID_lsb);*/
+                //
+                //while(topic_name_length < 5){
+
+                int buffer_offset2 = 6;
+                int counter_topic = 0;
+                myprintf("\tTopics:\n");
+
+                while(buffer_offset2 < remaining_length){
+                    myprintf("\t\tTopic name %d: ",counter_topic);
+                    for(int i=0; i<topic_name_length;i++)
+                    {
+                        myprintf("%c", *(p+buffer_offset2));
+
+                        buffer_offset2++;
+                    }
+                    myprintf("\n");
+                    counter_topic++;
+                }
+
+                //Last byte
+                unsigned char last_byte[8];
+                memset(last_byte,'\000',8);
+                bits_from(last_byte,*(p+buffer_offset2));
+                //reverse_array(last_byte, sizeof(last_byte));
+
+                //leggo i primi 2 bit
+                u_char req_qos[2] = {last_byte[1],last_byte[0]};
+                int int_req_qos = str2int2(req_qos);
+                myprintf("\t\tRequest QoS: %d\n",int_req_qos);
+
 
 				break;
 			case 9:
