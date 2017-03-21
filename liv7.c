@@ -91,12 +91,13 @@ void liv7(u_int len, const u_char *p) {
 
 		switch (control_pkt_type){
 			case 0:
-				myprintf("RESERVED |");
+				myprintf("\tRESERVED\n");
 				break;
 			case 1:
-				myprintf("\t\tDup: %d\n",dup);
-				myprintf("\t\tQoS: %d\n",fh_qos);
-				myprintf("\t\tRetain: %d\n",retain);
+				myprintf("\t\tReserved: %d\n",dup);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
+				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
+				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
 
 				myprintf("\tCONNECT\n");
@@ -187,7 +188,6 @@ void liv7(u_int len, const u_char *p) {
 
 				unsigned char client_id_length[16];
 
-
 				reverse_array(client_id_length_msb,sizeof(client_id_length_msb));
 				reverse_array(client_id_length_lsb,sizeof(client_id_length_lsb));
 
@@ -211,17 +211,126 @@ void liv7(u_int len, const u_char *p) {
 
 				if(will_flag == 1) // se will flag è 1 ci sono will topic e will message
 				{
+					// Will topic length
+					unsigned char will_topic_length_msb[8];
+					bits_from(will_topic_length_msb,*(p+buffer_offset));
+					buffer_offset++;
+					unsigned char will_topic_length_lsb[8];
+					bits_from(will_topic_length_lsb,*(p+buffer_offset));
 
+					unsigned char will_topic_length[16];
+
+					reverse_array(will_topic_length_msb,sizeof(will_topic_length_msb));
+					reverse_array(will_topic_length_lsb,sizeof(will_topic_length_lsb));
+
+					memcpy(will_topic_length,will_topic_length_msb, sizeof(will_topic_length_msb));
+					memcpy(will_topic_length + 8,will_topic_length_lsb, sizeof(will_topic_length_lsb));
+
+					int will_topic_len = str2int16(will_topic_length);
+					myprintf("\tWill Topic length: %d\n", will_topic_len);
+
+					// Will Topic
+					buffer_offset++;
+					myprintf("\tWill Topic: ", will_topic_len);
+					for(int i=0; i<will_topic_len;i++)
+					{
+						myprintf("%c", *(p+buffer_offset));
+						buffer_offset++;
+					}
+					myprintf("\n");
+
+
+
+					// Will Message length
+					unsigned char will_message_length_msb[8];
+					bits_from(will_message_length_msb,*(p+buffer_offset));
+					buffer_offset++;
+					unsigned char will_message_length_lsb[8];
+					bits_from(will_message_length_lsb,*(p+buffer_offset));
+
+					unsigned char will_message_length[16];
+
+					reverse_array(will_message_length_msb,sizeof(will_message_length_msb));
+					reverse_array(will_message_length_lsb,sizeof(will_message_length_lsb));
+
+					memcpy(will_message_length,will_message_length_msb, sizeof(will_message_length_msb));
+					memcpy(will_message_length + 8,will_message_length_lsb, sizeof(will_message_length_lsb));
+
+					int will_message_len = str2int16(will_message_length);
+					myprintf("\tWill Message length: %d\n", will_message_len);
+
+					// Will Message
+					buffer_offset++;
+					myprintf("\tWill Message: ", will_message_len);
+					for(int i=0; i<will_message_len;i++)
+					{
+						myprintf("%c", *(p+buffer_offset));
+						buffer_offset++;
+					}
+					myprintf("\n");
 				}
 
 				if(username == 1) // se username è 1 c'è uno username
 				{
 
+					// Username length
+					unsigned char username_length_msb[8];
+					bits_from(username_length_msb,*(p+buffer_offset));
+					buffer_offset++;
+					unsigned char username_length_lsb[8];
+					bits_from(username_length_lsb,*(p+buffer_offset));
+
+					unsigned char username_length[16];
+
+					reverse_array(username_length_msb,sizeof(username_length_msb));
+					reverse_array(username_length_lsb,sizeof(username_length_lsb));
+
+					memcpy(username_length,username_length_msb, sizeof(username_length_msb));
+					memcpy(username_length + 8,username_length_lsb, sizeof(username_length_lsb));
+
+					int username_len = str2int16(username_length);
+					myprintf("\tUsername length: %d\n", username_len);
+
+					// Username
+					buffer_offset++;
+					myprintf("\tUsername:", username_len);
+					for(int i=0; i<username_len;i++)
+					{
+						myprintf("%c", *(p+buffer_offset));
+						buffer_offset++;
+					}
+					myprintf("\n");
 				}
 
 				if(password == 1) // se password è 1 c'è una password
 				{
+					// Username length
+					unsigned char password_length_msb[8];
+					bits_from(password_length_msb,*(p+buffer_offset));
+					buffer_offset++;
+					unsigned char password_length_lsb[8];
+					bits_from(password_length_lsb,*(p+buffer_offset));
 
+					unsigned char password_length[16];
+
+					reverse_array(password_length_msb,sizeof(password_length_msb));
+					reverse_array(password_length_lsb,sizeof(password_length_lsb));
+
+					memcpy(password_length,password_length_msb, sizeof(password_length_msb));
+					memcpy(password_length + 8,password_length_lsb, sizeof(password_length_lsb));
+
+					int password_len = str2int16(password_length);
+					myprintf("\tPassword length: %d\n", password_len);
+
+					// Username
+					buffer_offset++;
+					myprintf("\tPassword:", password_len);
+					for(int i=0; i<password_len;i++)
+					{
+						myprintf("%c", *(p+buffer_offset));
+						buffer_offset++;
+					}
+					myprintf("\n");
 				}
 
 
@@ -232,7 +341,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("CONNACK |");
+				myprintf("\tCONNACK\n");
 
 				break;
 			case 3:
@@ -240,7 +349,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tQoS: %d\n",fh_qos);
 				myprintf("\t\tRetain: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("\tPUBLISH");
+				myprintf("\tPUBLISH\n");
 
 				int x = 1;
 				int multi = 1;
@@ -272,7 +381,7 @@ void liv7(u_int len, const u_char *p) {
 				memcpy(var_headers_length + 8,var_headers_length_lsb, sizeof(var_headers_length_lsb));
 
 				int var_h_length = str2int16(var_headers_length);
-				myprintf("\n\t\tVariable Headers length: %d\n", var_h_length);
+				myprintf("\t\tVariable Headers length: %d\n", var_h_length);
 
 				//topic name
 				int buff_offset = 5;
@@ -323,7 +432,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("\tPUBACK");
+				myprintf("\tPUBACK\n");
 
                 unsigned char p_ACK_msb[8];
                 bits_from(p_ACK_msb,*(p+2));
@@ -340,7 +449,7 @@ void liv7(u_int len, const u_char *p) {
 
                 int pk_AK = str2int16(p_ACK_length);
 
-                myprintf("\n\t\tPacket ID ACK: %d", pk_AK);
+                myprintf("\t\tPacket ID ACK: %d", pk_AK);
 
 				break;
 
@@ -350,7 +459,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("\tPUBREC");
+				myprintf("\tPUBREC\n");
 
                 unsigned char p_REC_msb[8];
                 bits_from(p_REC_msb,*(p+2));
@@ -367,7 +476,7 @@ void liv7(u_int len, const u_char *p) {
 
                 int pk_REC = str2int16(p_REC_length);
 
-                myprintf("\n\t\tPacket ID REC: %d", pk_REC);
+                myprintf("\t\tPacket ID REC: %d", pk_REC);
 
 				break;
 			case 6:
@@ -376,7 +485,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("\tPUBREL");
+				myprintf("\tPUBREL\n");
 
                 unsigned char p_REL_msb[8];
                 bits_from(p_REL_msb,*(p+2));
@@ -393,7 +502,7 @@ void liv7(u_int len, const u_char *p) {
 
                 int pk_REL = str2int16(p_REL_length);
 
-                myprintf("\n\t\tPacket ID REL: %d", pk_REL);
+                myprintf("\t\tPacket ID REL: %d", pk_REL);
 
 				break;
 			case 7:
@@ -402,7 +511,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("\tPUBCOMP");
+				myprintf("\tPUBCOMP\n");
 
                 unsigned char p_COMP_msb[8];
                 bits_from(p_COMP_msb,*(p+2));
@@ -419,7 +528,7 @@ void liv7(u_int len, const u_char *p) {
 
                 int pk_COMP = str2int16(p_COMP_length);
 
-                myprintf("\n\t\tPacket ID COMP: %d", pk_COMP);
+                myprintf("\t\tPacket ID COMP: %d", pk_COMP);
 
 				break;
 
@@ -429,7 +538,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("\tSUBSCRIBE \n");
+				myprintf("\tSUBSCRIBE\n");
 
 				myprintf("\tMessage Header:\n");
 
@@ -546,7 +655,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("SUBACK |");
+				myprintf("\tSUBACK\n");
 				break;
 			case 10:
 				myprintf("\t\tReserved: %d\n",dup);
@@ -554,7 +663,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("UNSUBSCRIBE |");
+				myprintf("\tUNSUBSCRIBE\n");
 				break;
 			case 11:
 				myprintf("\t\tReserved: %d\n",dup);
@@ -562,7 +671,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("UNSUBACK |");
+				myprintf("\tUNSUBACK\n");
 				break;
 			case 12:
 				myprintf("\t\tReserved: %d\n",dup);
@@ -570,7 +679,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("PINGREQ |");
+				myprintf("\tPINGREQ\n");
 				break;
 			case 13:
 				myprintf("\t\tReserved: %d\n",dup);
@@ -578,7 +687,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("PINGRESP |");
+				myprintf("\tPINGRESP\n");
 				break;
 			case 14:
 				myprintf("\t\tReserved: %d\n",dup);
@@ -586,10 +695,10 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("DISCONNECT |");
+				myprintf("\tDISCONNECT\n");
 				break;
 			case 15:
-				myprintf("RESERVED |");
+				myprintf("\tRESERVED\n");
 				break;
 
 		}
