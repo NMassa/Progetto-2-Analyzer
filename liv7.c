@@ -240,7 +240,6 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tQoS: %d\n",fh_qos);
 				myprintf("\t\tRetain: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("PUBLISH |");
 				myprintf("\tPUBLISH");
 
 				int x = 1;
@@ -257,7 +256,6 @@ void liv7(u_int len, const u_char *p) {
 				while ((enc_Byte & 128) != 0);
 				(*p--);
 				//Print the result
-				myprintf("\n\t\tRemaininig length: %d\n", val);
 
 				//Lunghezza MSB e LSB dei restanti header
 				unsigned char var_headers_length_msb[8];
@@ -274,7 +272,7 @@ void liv7(u_int len, const u_char *p) {
 				memcpy(var_headers_length + 8,var_headers_length_lsb, sizeof(var_headers_length_lsb));
 
 				int var_h_length = str2int16(var_headers_length);
-				myprintf("\t\tVariable Headers length: %d\n", var_h_length);
+				myprintf("\n\t\tVariable Headers length: %d\n", var_h_length);
 
 				//topic name
 				int buff_offset = 5;
@@ -306,38 +304,71 @@ void liv7(u_int len, const u_char *p) {
 
 					int pk_ID = str2int16(pk_ID_length);
 
-					myprintf("\t\tPacket_ID: %d", pk_ID);
+					myprintf("\t\tPacket_ID: %d\n", pk_ID);
 				}
 
 				//Stampo il Payload
 				myprintf("\t\tPayload: ");
-				for(int i = buff_offset; i <len; i++)
+				for(int i = buff_offset; i <=len; i++)
 				{
 					myprintf("%c", *(p + buff_offset));
 					buff_offset ++;
 				}
-				myprintf("\n");
 
 				break;
 
-
-
-				break;
 			case 4:
 				myprintf("\t\tReserved: %d\n",dup);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("PUBACK |");
+				myprintf("\tPUBACK");
+
+                unsigned char p_ACK_msb[8];
+                bits_from(p_ACK_msb,*(p+2));
+                unsigned char p_ACK_lsb[8];
+                bits_from(p_ACK_lsb,*(p+3));
+
+                unsigned char p_ACK_length[16];
+
+                reverse_array(p_ACK_msb,sizeof(p_ACK_msb));
+                reverse_array(p_ACK_lsb,sizeof(p_ACK_lsb));
+
+                memcpy(p_ACK_length,p_ACK_msb, sizeof(p_ACK_msb));
+                memcpy(p_ACK_length + 8,p_ACK_lsb, sizeof(p_ACK_lsb));
+
+                int pk_AK = str2int16(p_ACK_length);
+
+                myprintf("\n\t\tPacket ID ACK: %d", pk_AK);
+
 				break;
-			case 5:
+
+            case 5:
 				myprintf("\t\tReserved: %d\n",dup);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("PUBREC |");
+				myprintf("\tPUBREC");
+
+                unsigned char p_REC_msb[8];
+                bits_from(p_REC_msb,*(p+2));
+                unsigned char p_REC_lsb[8];
+                bits_from(p_REC_lsb,*(p+3));
+
+                unsigned char p_REC_length[16];
+
+                reverse_array(p_REC_msb,sizeof(p_REC_msb));
+                reverse_array(p_REC_lsb,sizeof(p_REC_lsb));
+
+                memcpy(p_REC_length,p_REC_msb, sizeof(p_REC_msb));
+                memcpy(p_REC_length + 8,p_REC_lsb, sizeof(p_REC_lsb));
+
+                int pk_REC = str2int16(p_REC_length);
+
+                myprintf("\n\t\tPacket ID REC: %d", pk_REC);
+
 				break;
 			case 6:
 				myprintf("\t\tReserved: %d\n",dup);
@@ -345,7 +376,25 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("PUBREL |");
+				myprintf("\tPUBREL");
+
+                unsigned char p_REL_msb[8];
+                bits_from(p_REL_msb,*(p+2));
+                unsigned char p_REL_lsb[8];
+                bits_from(p_REL_lsb,*(p+3));
+
+                unsigned char p_REL_length[16];
+
+                reverse_array(p_REL_msb,sizeof(p_REL_msb));
+                reverse_array(p_REL_lsb,sizeof(p_REL_lsb));
+
+                memcpy(p_REL_length,p_REL_msb, sizeof(p_REL_msb));
+                memcpy(p_REL_length + 8,p_REL_lsb, sizeof(p_REL_lsb));
+
+                int pk_REL = str2int16(p_REL_length);
+
+                myprintf("\n\t\tPacket ID REL: %d", pk_REL);
+
 				break;
 			case 7:
 				myprintf("\t\tReserved: %d\n",dup);
@@ -353,9 +402,28 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("PUBCOMP |");
+				myprintf("\tPUBCOMP");
+
+                unsigned char p_COMP_msb[8];
+                bits_from(p_COMP_msb,*(p+2));
+                unsigned char p_COMP_lsb[8];
+                bits_from(p_COMP_lsb,*(p+3));
+
+                unsigned char p_COMP_length[16];
+
+                reverse_array(p_COMP_msb,sizeof(p_COMP_msb));
+                reverse_array(p_COMP_lsb,sizeof(p_COMP_lsb));
+
+                memcpy(p_COMP_length,p_COMP_msb, sizeof(p_COMP_msb));
+                memcpy(p_COMP_length + 8,p_COMP_lsb, sizeof(p_COMP_lsb));
+
+                int pk_COMP = str2int16(p_COMP_length);
+
+                myprintf("\n\t\tPacket ID COMP: %d", pk_COMP);
+
 				break;
-			case 8:
+
+            case 8:
 				myprintf("\t\tReserved: %d\n",dup);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
