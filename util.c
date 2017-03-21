@@ -75,7 +75,7 @@ int str2int(u_char s[]){
 void reverse(unsigned char *bits, unsigned char *dest)
 {
 	int c = sizeof(bits) - 1;
-	for(int i=0;i<7;i++)
+	for(int i=0;i < sizeof(bits);i++)
 	{
 		dest[c] = bits[i];
 		c--;

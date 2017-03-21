@@ -3,6 +3,30 @@
 #include <ctype.h>
 
 
+int GetBit(u_char byte, int n){
+    return (byte & (1<<n)) != 0 ? 1 : 0;
+}
+
+void reverse_array(u_char *pointer, int n)
+{
+    u_char *s;
+    int c, d;
+
+    s = (u_char*)malloc(sizeof(u_char)*n);
+
+    if( s == NULL )
+        exit(EXIT_FAILURE);
+
+    for ( c = n - 1, d = 0 ; c >= 0 ; c--, d++ )
+        *(s+d) = *(pointer+c);
+
+    for ( c = 0 ; c < n ; c++ )
+        *(pointer+c) = *(s+c);
+
+    free(s);
+}
+
+
 
 void liv7(u_int len, const u_char *p) {
     int i;
@@ -26,6 +50,7 @@ void liv7(u_int len, const u_char *p) {
 	str[1] = '\0';
 	str[2] = '\0';
 	str[3] = '\0';
+
 
 	int c = 7;
 	for(int i = 4; i <= 7; i++){
@@ -58,11 +83,11 @@ void liv7(u_int len, const u_char *p) {
 			unsigned char temp[7];
 			memcpy(temp,fixed_header_bits2,sizeof(fixed_header_bits2)-1);
 
-			unsigned char reversed[7];
 
-			reverse(temp,reversed);
 
-			int remaininig_length = str2int(reversed);
+            reverse_array(temp, sizeof(temp) );
+
+			int remaininig_length = str2int(temp);
 			int digit = 0;
 
 			int value =0;
@@ -84,14 +109,14 @@ void liv7(u_int len, const u_char *p) {
 
 			unsigned char variable_headers_length[16];
 
-			u_char rev_msb[8];
-			u_char rev_lsb[8];
+			//u_char rev_msb[8];
+			//u_char rev_lsb[8];
 
-			reverse(variable_headers_length_msb,rev_msb);
-			reverse(variable_headers_length_lsb,rev_lsb);
+            reverse_array(variable_headers_length_msb,sizeof(variable_headers_length_msb));
+            reverse_array(variable_headers_length_lsb,sizeof(variable_headers_length_lsb));
 
-			memcpy(variable_headers_length,rev_msb, sizeof(rev_msb));
-			memcpy(variable_headers_length + 8,rev_lsb, sizeof(rev_lsb));
+			memcpy(variable_headers_length,variable_headers_length_msb, sizeof(variable_headers_length_msb));
+			memcpy(variable_headers_length + 8,variable_headers_length_lsb, sizeof(variable_headers_length_lsb));
 
 			int v_h_length = str2int(variable_headers_length);
 			myprintf("\tVariable Headers length: %d\n", v_h_length);
@@ -109,9 +134,9 @@ void liv7(u_int len, const u_char *p) {
 			// Protocol Version Number
 			u_char pvn_bits[8];
 			bits_from(pvn_bits,*(p+buffer_offset));
-			u_char rev_pvm[8];
-			reverse(pvn_bits,rev_pvm);
-			int pvm = str2int(rev_pvm);
+			//u_char rev_pvm[8];
+			reverse_array(pvn_bits,sizeof(pvn_bits));
+			int pvm = str2int(pvn_bits);
 			myprintf("\tProtocol Version Number: %d\n",pvm);
 			buffer_offset++;
 
@@ -141,14 +166,14 @@ void liv7(u_int len, const u_char *p) {
 
 			unsigned char keep_alive[16];
 
-			u_char rev_ka_msb[8];
-			u_char rev_ka_lsb[8];
+			//u_char rev_ka_msb[8];
+			//u_char rev_ka_lsb[8];
 
-			reverse(keep_alive_timer_msb,rev_ka_msb);
-			reverse(keep_alive_timer_lsb,rev_ka_lsb);
+			reverse_array(keep_alive_timer_msb,sizeof(keep_alive_timer_msb));
+			reverse_array(keep_alive_timer_lsb,sizeof(keep_alive_timer_lsb));
 
-			memcpy(keep_alive,rev_ka_msb, sizeof(rev_ka_msb));
-			memcpy(keep_alive + 8,rev_ka_lsb, sizeof(rev_ka_lsb));
+			memcpy(keep_alive,keep_alive_timer_msb, sizeof(keep_alive_timer_msb));
+			memcpy(keep_alive + 8,keep_alive_timer_lsb, sizeof(keep_alive_timer_lsb));
 
 			int keep_alive_timer = str2int(keep_alive);
 			myprintf("\tKeep Alive Timer: %d\n", keep_alive_timer);
@@ -175,10 +200,65 @@ void liv7(u_int len, const u_char *p) {
 			myprintf("PUBCOMP |");
 			break;
 		case 8:
-			myprintf("SUBSCRIBE |");
+			myprintf("\tSUBSCRIBE \n");
             fixed_header = *(p+1);
 
-            /*unsigned char fixed_header_bits2[8];
+            fixed_header_bits2[8];
+            bits_from(fixed_header_bits2,fixed_header);
+
+            int prova = GetBit(fixed_header_bits2, 1);
+
+            more = fixed_header_bits2[7]; //c'è un altro byte di len
+
+            free(prova);
+
+            temp[7];
+            memcpy(temp,fixed_header_bits2,sizeof(fixed_header_bits2)-1);
+
+            //reversed[7];
+
+            //reverse(temp,reversed);
+
+            //remaininig_length = str2int(reversed);
+            digit = 0;
+
+            value =0;
+            multiplier = 1;
+            do{
+                digit = remaininig_length;
+                value += (digit & 127) * multiplier;
+                multiplier *= 128;
+            }
+            while ((digit & 128) !=0);
+
+            myprintf("\tRemaininig length: %d\n", value);
+
+            myprintf("\tMessage Header:\n");
+
+            //Lunghezza MSB e LSB dei restanti header
+            unsigned char variable_headers_message_ID_msb[8];
+            memset(variable_headers_message_ID_msb,'\000',8);
+            bits_from(variable_headers_message_ID_msb,*(p+2));
+            unsigned char variable_headers_message_ID_lsb[8];
+            memset(variable_headers_message_ID_lsb,'\000',8);
+            bits_from(variable_headers_message_ID_lsb,*(p+3));
+
+            u_char rev_msb2[8];
+            memset(rev_msb2,'\000',8);
+            u_char rev_lsb2[8];
+            memset(rev_lsb2,'\000',8);
+
+            reverse(variable_headers_message_ID_msb,rev_msb2);
+            reverse(variable_headers_message_ID_lsb,rev_lsb2);
+
+            memcpy(variable_headers_length,rev_msb2, sizeof(rev_msb2));
+            memcpy(variable_headers_length + 8,rev_lsb2, sizeof(rev_lsb2));
+
+            int id = str2int(variable_headers_length);
+            myprintf("\t\tMessage ID msb: %d\n", id);
+            myprintf("\t\tMessage ID lsb: %s\n", rev_lsb2);
+
+            /*fixed_header_bits2[8];
 			bits_from(fixed_header_bits2,fixed_header);
 
 			unsigned char more = fixed_header_bits2[7]; //c'è un altro byte di len
