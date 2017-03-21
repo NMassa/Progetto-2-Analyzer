@@ -190,7 +190,7 @@ void liv7(u_int len, const u_char *p) {
 			memcpy(keep_alive,keep_alive_timer_msb, sizeof(keep_alive_timer_msb));
 			memcpy(keep_alive + 8,keep_alive_timer_lsb, sizeof(keep_alive_timer_lsb));
 
-			int keep_alive_timer = str2int(keep_alive);
+			int keep_alive_timer = str2int16(keep_alive);
 			myprintf("\tKeep Alive Timer: %d\n", keep_alive_timer);
 
 			// Payload
@@ -236,7 +236,7 @@ void liv7(u_int len, const u_char *p) {
 			break;
 		case 8:
 			myprintf("\tSUBSCRIBE \n");
-            fixed_header = *(p+1);
+            //fixed_header = *(p+1);
 
             /*fixed_header_bits2[8];
             bits_from(fixed_header_bits2,fixed_header);
@@ -271,7 +271,7 @@ void liv7(u_int len, const u_char *p) {
 			value = 0;
 
 			do {
-				u_char encodedByte = *(p+k);
+				u_char encodedByte = (*p+k);
 				value += (encodedByte &	127) * multiplier;
 				multiplier *= 128;
 				k++;
@@ -286,25 +286,61 @@ void liv7(u_int len, const u_char *p) {
             unsigned char variable_headers_message_ID_msb[8];
             memset(variable_headers_message_ID_msb,'\000',8);
             bits_from(variable_headers_message_ID_msb,*(p+2));
+            reverse_array(variable_headers_message_ID_msb, sizeof(variable_headers_message_ID_msb));
+
+
+
+
+			//
+			myprintf("ID MSB: ");
+			myprintf("%d", variable_headers_message_ID_msb[0]);
+			myprintf("%d", variable_headers_message_ID_msb[1]);
+			myprintf("%d", variable_headers_message_ID_msb[2]);
+			myprintf("%d", variable_headers_message_ID_msb[3]);
+			myprintf("%d", variable_headers_message_ID_msb[4]);
+			myprintf("%d", variable_headers_message_ID_msb[5]);
+			myprintf("%d", variable_headers_message_ID_msb[6]);
+			myprintf("%d\n", variable_headers_message_ID_msb[7]);
+			//
+
             unsigned char variable_headers_message_ID_lsb[8];
             memset(variable_headers_message_ID_lsb,'\000',8);
             bits_from(variable_headers_message_ID_lsb,*(p+3));
+			reverse_array(variable_headers_message_ID_lsb, sizeof(variable_headers_message_ID_lsb));
 
-            u_char rev_msb2[8];
+			//
+			myprintf("ID LSB: ");
+			myprintf("%d", variable_headers_message_ID_lsb[0]);
+			myprintf("%d", variable_headers_message_ID_lsb[1]);
+			myprintf("%d", variable_headers_message_ID_lsb[2]);
+			myprintf("%d", variable_headers_message_ID_lsb[3]);
+			myprintf("%d", variable_headers_message_ID_lsb[4]);
+			myprintf("%d", variable_headers_message_ID_lsb[5]);
+			myprintf("%d", variable_headers_message_ID_lsb[6]);
+			myprintf("%d\n", variable_headers_message_ID_lsb[7]);
+			//
+
+            /*u_char rev_msb2[8];
             memset(rev_msb2,'\000',8);
             u_char rev_lsb2[8];
             memset(rev_lsb2,'\000',8);
 
             reverse(variable_headers_message_ID_msb,rev_msb2);
             reverse(variable_headers_message_ID_lsb,rev_lsb2);
+             */
 
-            memcpy(variable_headers_length,rev_msb2, sizeof(rev_msb2));
-            memcpy(variable_headers_length + 8,rev_lsb2, sizeof(rev_lsb2));
+            unsigned char variable_headers_id[16];
 
-            int id = str2int(variable_headers_length);
-            myprintf("\t\tMessage ID msb: %d\n", id);
-            myprintf("\t\tMessage ID lsb: %s\n", rev_lsb2);
+            memcpy(variable_headers_id,variable_headers_message_ID_msb, sizeof(variable_headers_message_ID_msb));
+            memcpy(variable_headers_id + 8,variable_headers_message_ID_lsb, sizeof(variable_headers_message_ID_lsb));
 
+
+            int id = str2int16(variable_headers_id);
+            int id1 = str2int(variable_headers_message_ID_msb);
+            int id2 = str2int(variable_headers_message_ID_lsb);
+            myprintf("\t\tMessage ID msb: %d\n", id1);
+            myprintf("\t\tMessage ID lsb: %d\n", id2);
+            myprintf("\t\tMessage ID: %d\n", id);
             /*fixed_header_bits2[8];
 			bits_from(fixed_header_bits2,fixed_header);
 

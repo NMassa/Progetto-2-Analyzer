@@ -72,6 +72,18 @@ int str2int(u_char s[]){
 	return numero;
 }
 
+int str2int16(u_char s[]){
+    int numero =0;
+    for (int i =0; i<16; i++)
+    {
+        if(s[i] == '\001')
+        {
+            numero |= 1 << (15-i);
+        }
+    }
+    return numero;
+}
+
 void reverse(unsigned char *bits, unsigned char *dest)
 {
 	int c = sizeof(bits) - 1;

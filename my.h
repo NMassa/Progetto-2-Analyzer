@@ -19,6 +19,7 @@ void print_liv2(const u_char *);
 void bits_from(u_char *bits,u_char byte);
 void int_bits_from(u_int *bits,u_char byte);
 int str2int(unsigned char str[]);
+int str2int16(unsigned char str[]);
 void reverse(unsigned char *bits, unsigned char *dest);
 void reverse_array(u_char *pointer,int n);
 
