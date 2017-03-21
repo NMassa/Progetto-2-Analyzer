@@ -73,8 +73,9 @@ void liv7(u_int len, const u_char *p) {
 			break;
 		case 1:
 			myprintf("\tCONNECT\n");
-			fixed_header = *(p+1);
+			//fixed_header = *(p+1);
 
+			/*
 			unsigned char fixed_header_bits2[8];
 			bits_from(fixed_header_bits2,fixed_header);
 
@@ -83,21 +84,30 @@ void liv7(u_int len, const u_char *p) {
 			unsigned char temp[7];
 			memcpy(temp,fixed_header_bits2,sizeof(fixed_header_bits2)-1);
 
+            reverse_array(temp, sizeof(temp));
 
-
-            reverse_array(temp, sizeof(temp) );
-
-			int remaininig_length = str2int(temp);
+			int remaining_length = str2int(temp);
 			int digit = 0;
 
 			int value =0;
 			int multiplier = 1;
 			do{
-				digit = remaininig_length;
+				digit = remaining_length;
 				value += (digit & 127) * multiplier;
 				multiplier *= 128;
 			}
-			while ((digit & 128) !=0);
+			while ((digit & 128) !=0);*/
+			int k = 1;
+			int multiplier = 1;
+			int value = 0;
+			u_char encodedByte;
+			do {
+				u_char encodedByte = *(p+k);
+				value += (encodedByte &	127) * multiplier;
+				multiplier *= 128;
+				k++;
+
+			} while ((encodedByte & 128) != 0);
 
 			myprintf("\tRemaininig length: %d\n", value);
 
@@ -147,13 +157,18 @@ void liv7(u_int len, const u_char *p) {
 			u_char qos_c[2];
 			sprintf(qos_c, "%d%d",cf_bits[3],cf_bits[4]);
 			int qos = str2int(qos_c);
+			int clean_session = cf_bits[1]; //se è 1 non si manda nel payload il client identifier
+			int will_flag = cf_bits[2];
+			int will_retain = cf_bits[5];
+			int password = cf_bits[6];
+			int username = cf_bits[7];
 			myprintf("\t\tReserved: %d\n",cf_bits[0]);
-			myprintf("\t\tClean Session: %d\n",cf_bits[1]);
-			myprintf("\t\tWill Flag: %d\n",cf_bits[2]);
+			myprintf("\t\tClean Session: %d\n",clean_session);
+			myprintf("\t\tWill Flag: %d\n",will_flag);
 			myprintf("\t\tQoS: %d\n",qos);
-			myprintf("\t\tWill Retain: %d\n",cf_bits[5]);
-			myprintf("\t\tPassword: %d\n",cf_bits[6]);
-			myprintf("\t\tUsername: %d\n",cf_bits[7]);
+			myprintf("\t\tWill Retain: %d\n",will_retain);
+			myprintf("\t\tPassword: %d\n", password);
+			myprintf("\t\tUsername: %d\n", username);
 			buffer_offset++;
 
 			// Keep Alive Timer
@@ -179,6 +194,26 @@ void liv7(u_int len, const u_char *p) {
 			myprintf("\tKeep Alive Timer: %d\n", keep_alive_timer);
 
 			// Payload
+			if (clean_session == 0) //c'è un client identifier
+			{
+
+			}
+
+			if(will_flag == 1) // se will flag è 1 ci sono will topic e will message
+			{
+
+			}
+
+			if(username == 1) // se username è 1 c'è uno username
+			{
+
+			}
+
+			if(password == 1) // se password è 1 c'è una password
+			{
+
+			}
+
 
 			break;
 		case 2:
@@ -203,7 +238,7 @@ void liv7(u_int len, const u_char *p) {
 			myprintf("\tSUBSCRIBE \n");
             fixed_header = *(p+1);
 
-            fixed_header_bits2[8];
+            /*fixed_header_bits2[8];
             bits_from(fixed_header_bits2,fixed_header);
 
             int prova = GetBit(fixed_header_bits2, 1);
@@ -219,17 +254,29 @@ void liv7(u_int len, const u_char *p) {
 
             //reverse(temp,reversed);
 
-            //remaininig_length = str2int(reversed);
+			int remaining_length2 = str2int(temp);
             digit = 0;
 
             value =0;
             multiplier = 1;
             do{
-                digit = remaininig_length;
+                digit = remaining_length2;
                 value += (digit & 127) * multiplier;
                 multiplier *= 128;
             }
             while ((digit & 128) !=0);
+            */
+			k = 1;
+			multiplier = 1;
+			value = 0;
+
+			do {
+				u_char encodedByte = *(p+k);
+				value += (encodedByte &	127) * multiplier;
+				multiplier *= 128;
+				k++;
+
+			} while ((encodedByte & 128) != 0);
 
             myprintf("\tRemaininig length: %d\n", value);
 

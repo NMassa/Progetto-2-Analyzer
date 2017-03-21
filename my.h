@@ -16,9 +16,11 @@ void myprintf(const char *, ...);
 void print_ipv4(const u_char *);
 void print_ipv6(const u_char *);
 void print_liv2(const u_char *);
-void bits_from(unsigned char *bits,u_char byte);
+void bits_from(u_char *bits,u_char byte);
+void int_bits_from(u_int *bits,u_char byte);
 int str2int(unsigned char str[]);
 void reverse(unsigned char *bits, unsigned char *dest);
+void reverse_array(u_char *pointer,int n);
 
 struct filt_ipv4 {
 	u_char sip[4]; // indirizzo sorgente
