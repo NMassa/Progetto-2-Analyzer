@@ -402,20 +402,8 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t|   PUBLISH   |\n");
 				myprintf("\t---------------\n");
 
-				int x = 1;
-				int multi = 1;
-				int val = 0;
-				u_char enc_Byte;
-				do
-				{
-					enc_Byte = *(p+x);
-					val += (enc_Byte &	127) * multi;
-					multi *= 128;
-					x++;
-				}
-				while ((enc_Byte & 128) != 0);
+
 				(*p--);
-				//Print the result
 
 				//Lunghezza MSB e LSB dei restanti header
 				unsigned char var_headers_length_msb[8];
@@ -444,7 +432,6 @@ void liv7(u_int len, const u_char *p) {
 				}
 				myprintf("\n");
 
-				//TODO: Packet_ID è un campo che esiste solo se QoS è > 0..Dovrebbe andare
 				if(fh_qos > 0)
 				{
 					unsigned char pk_ID_msb[8];
@@ -854,7 +841,7 @@ void liv7(u_int len, const u_char *p) {
                 reverse_array(USB_ACK_msb,sizeof(USB_ACK_msb));
                 reverse_array(USB_ACK_lsb,sizeof(USB_ACK_lsb));
 
-                memcpy(USB_ACK_length,mess_ID_msb, sizeof(USB_ACK_msb));
+                memcpy(USB_ACK_length,USB_ACK_msb, sizeof(USB_ACK_msb));
                 memcpy(USB_ACK_length + 8,USB_ACK_lsb, sizeof(USB_ACK_lsb));
 
                 int USB_ACK = str2int16(USB_ACK_length);
