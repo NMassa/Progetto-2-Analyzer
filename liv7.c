@@ -427,7 +427,7 @@ void liv7(u_int len, const u_char *p) {
 				//topic name
 				int buff_offset = 5;
 				myprintf("\t\tTopic Name: ");
-				char topic[255];
+				u_char topic[255];
 				for(int i = 0; i < var_h_length; i++)
 				{
 					myprintf("%c", *(p+buff_offset));
@@ -466,8 +466,6 @@ void liv7(u_int len, const u_char *p) {
 				}
 
 				//Stampo il Payload
-
-
 				myprintf("\t\tPayload: ");
 				for(int i = buff_offset; i <=len; i++)
 				{
@@ -476,11 +474,35 @@ void liv7(u_int len, const u_char *p) {
 				}
 				//stringa_topic[jj] = '\0';
 
-				if(strncmp(filt_mqtt->topic,topic, sizeof(var_h_length)) != 0){
-					decoded = 0;
-					//break;
+				decoded = 1;
+
+				u_char *hash;
+				hash = strchr(filt_mqtt->topic,'#');
+				int index;
+				if(hash != NULL) {
+					index = (int) (hash - filt_mqtt->topic);
 				}
-				else {decoded =1;}
+				u_char *topic1;
+				u_char *filt_topic1;
+
+				if (index != NULL && index >= 0)
+				{
+					topic1 = malloc(sizeof(u_char) * (index-1));
+					filt_topic1 = malloc(sizeof(u_char) * (index-1));
+					memcpy(topic1, topic, index);
+					memcpy(filt_topic1,filt_mqtt->topic,index);
+					if(strncmp(topic1,filt_topic1, sizeof(topic1)) != 0){
+						decoded = 0;
+						//break;
+					}
+
+				} else{
+					if(strncmp(filt_mqtt->topic,topic, sizeof(topic)) != 0){
+						decoded = 0;
+						//break;
+					}
+				}
+
 
 
 				break;
@@ -774,14 +796,14 @@ void liv7(u_int len, const u_char *p) {
                 int int_code = str2int(integer);
 
                 if (integer[7] == '\001'){
-                    myprintf("\t\treturn code -> Failure\n");
+                    myprintf("\t\tReturn code: Failure\n");
                 }
                 else {
 
                     //char retain = fixed_header_bits[0];
                     u_char code_QoS[2] = {integer[1],integer[0]};
                     int int_code_QoS = str2int2(code_QoS);
-                    myprintf("\t\treturn code: %d -> Success\n", int_code_QoS);
+                    myprintf("\t\tReturn code: %d -> Success\n", int_code_QoS);
                 }
 
 				decoded =1;
