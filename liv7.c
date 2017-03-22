@@ -474,34 +474,35 @@ void liv7(u_int len, const u_char *p) {
 
 				decoded = 1;
 
-				u_char *hash;
-				hash = strchr(filt_mqtt->topic,'#');
-				int index;
-				if(hash != NULL) {
-					index = (int) (hash - filt_mqtt->topic);
-				}
-				u_char *topic1;
-				u_char *filt_topic1;
-
-				if (index != NULL && index >= 0)
+				if (filt_mqtt->topic != NULL || filt_kill == 1)
 				{
-					topic1 = malloc(sizeof(u_char) * (index-1));
-					filt_topic1 = malloc(sizeof(u_char) * (index-1));
-					memcpy(topic1, topic, index);
-					memcpy(filt_topic1,filt_mqtt->topic,index);
-					if(strncmp(topic1,filt_topic1, sizeof(topic1)) != 0){
-						decoded = 0;
-						//break;
+					u_char *hash;
+					hash = strchr(filt_mqtt->topic,'#');
+					int index;
+					if(hash != NULL) {
+						index = (int) (hash - filt_mqtt->topic);
 					}
+					u_char *topic1;
+					u_char *filt_topic1;
 
-				} else{
-					if(strncmp(filt_mqtt->topic,topic, sizeof(topic)) != 0){
-						decoded = 0;
-						//break;
+					if (index != NULL && index >= 0)
+					{
+						topic1 = malloc(sizeof(u_char) * (index-1));
+						filt_topic1 = malloc(sizeof(u_char) * (index-1));
+						memcpy(topic1, topic, index);
+						memcpy(filt_topic1,filt_mqtt->topic,index);
+						if(strncmp(topic1,filt_topic1, sizeof(topic1)) != 0){
+							decoded = 0;
+							//break;
+						}
+
+					} else{
+						if(strncmp(filt_mqtt->topic,topic, sizeof(topic)) != 0){
+							decoded = 0;
+							//break;
+						}
 					}
 				}
-
-
 
 				break;
 
