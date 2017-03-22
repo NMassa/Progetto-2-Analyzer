@@ -100,7 +100,9 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
 
-				myprintf("\tCONNECT\n");
+				myprintf("\t---------------\n");
+				myprintf("\t|   CONNECT   |\n");
+				myprintf("\t---------------\n");
 
 				(*p--);
 
@@ -341,7 +343,10 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
-				myprintf("\tCONNACK\n");
+
+				myprintf("\t---------------\n");
+				myprintf("\t|   CONNACK   |\n");
+				myprintf("\t---------------\n");
 
 				// Connection Ack Flags
 				unsigned char connack_flags[8];
@@ -392,7 +397,10 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tQoS: %d\n",fh_qos);
 				myprintf("\t\tRetain: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("\tPUBLISH\n");
+
+				myprintf("\t---------------\n");
+				myprintf("\t|   PUBLISH   |\n");
+				myprintf("\t---------------\n");
 
 				int x = 1;
 				int multi = 1;
@@ -475,7 +483,10 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
-				myprintf("\tPUBACK\n");
+
+				myprintf("\t--------------\n");
+				myprintf("\t|   PUBACK   |\n");
+				myprintf("\t--------------\n");
 
                 unsigned char p_ACK_msb[8];
                 bits_from(p_ACK_msb,*(p+2));
@@ -502,7 +513,10 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
-				myprintf("\tPUBREC\n");
+
+				myprintf("\t--------------\n");
+				myprintf("\t|   PUBREC   |\n");
+				myprintf("\t--------------\n");
 
                 unsigned char p_REC_msb[8];
                 bits_from(p_REC_msb,*(p+2));
@@ -528,7 +542,10 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
-				myprintf("\tPUBREL\n");
+
+				myprintf("\t--------------\n");
+				myprintf("\t|   PUBREL   |\n");
+				myprintf("\t--------------\n");
 
                 unsigned char p_REL_msb[8];
                 bits_from(p_REL_msb,*(p+2));
@@ -554,7 +571,10 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
-				myprintf("\tPUBCOMP\n");
+
+				myprintf("\t---------------\n");
+				myprintf("\t|   PUBCOMP   |\n");
+				myprintf("\t---------------\n");
 
                 unsigned char p_COMP_msb[8];
                 bits_from(p_COMP_msb,*(p+2));
@@ -580,7 +600,10 @@ void liv7(u_int len, const u_char *p) {
                 myprintf("\t\tQoS: %d\n",fh_qos);
                 myprintf("\t\tRetain: %d\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
-				myprintf("\tSUBSCRIBE\n");
+
+				myprintf("\t-----------------\n");
+				myprintf("\t|   SUBSCRIBE   |\n");
+				myprintf("\t-----------------\n");
 
 				myprintf("\tMessage Header:\n");
 
@@ -636,7 +659,7 @@ void liv7(u_int len, const u_char *p) {
 				memcpy(variable_headers_id,variable_headers_message_ID_msb, sizeof(variable_headers_message_ID_msb));
 				memcpy(variable_headers_id + 8,variable_headers_message_ID_lsb, sizeof(variable_headers_message_ID_lsb));
 
-//Message header
+				//Message header
                 int id = str2int16(variable_headers_id);
                 int id1 = str2int(variable_headers_message_ID_msb);
                 int id2 = str2int(variable_headers_message_ID_lsb);
@@ -644,7 +667,7 @@ void liv7(u_int len, const u_char *p) {
                 //myprintf("\t\tMessage ID lsb: %d\n", id2);
                 myprintf("\t\tMessage ID: %d\n", id); //no stampa solo utile ID
 
-//Header topic length
+				//Header topic length
                 unsigned char variable_topic_m[8];
                 memset(variable_topic_m,'\000',8);
                 bits_from(variable_topic_m,*(p+4));
@@ -700,15 +723,16 @@ void liv7(u_int len, const u_char *p) {
 
 				break;
 			case 9:
-
-
                 //Fixed Header
 				myprintf("\t\tReserved: %d\n",dup);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
-				myprintf("\tSUBACK\n");
+
+				myprintf("\t--------------\n");
+				myprintf("\t|   SUBACK   |\n");
+				myprintf("\t--------------\n");
 
                 //Variable Header
                 int index_buffer = 2;
@@ -756,7 +780,10 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
-				myprintf("\tUNSUBSCRIBE\n");
+
+				myprintf("\t-------------------\n");
+				myprintf("\t|   UNSUBSCRIBE   |\n");
+				myprintf("\t-------------------\n");
 
                 //Message ID
                 unsigned char mess_ID_msb[8];
@@ -811,7 +838,11 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
-				myprintf("\tUNSUBACK\n");
+
+				myprintf("\t----------------\n");
+				myprintf("\t|   UNSUBACK   |\n");
+				myprintf("\t----------------\n");
+
 
                 unsigned char USB_ACK_msb[8];
                 bits_from(USB_ACK_msb,*(p+2));
@@ -837,7 +868,11 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
-				myprintf("\tPINGREQ\n");
+
+				myprintf("\t---------------\n");
+				myprintf("\t|   PINGREQ   |\n");
+				myprintf("\t---------------\n");
+
 				break;
 			case 13:
 				myprintf("\t\tReserved: %d\n",dup);
@@ -845,7 +880,11 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
-				myprintf("\tPINGRESP\n");
+
+
+				myprintf("\t----------------\n");
+				myprintf("\t|   PINGRESP   |\n");
+				myprintf("\t----------------\n");
 				break;
 			case 14:
 				myprintf("\t\tReserved: %d\n",dup);
@@ -853,7 +892,10 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
 				myprintf("\t\tReserved: %d\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
-				myprintf("\tDISCONNECT\n");
+
+				myprintf("\t------------------\n");
+				myprintf("\t|   DISCONNECT   |\n");
+				myprintf("\t------------------\n");
 				break;
 			case 15:
 				myprintf("\tRESERVED\n");
