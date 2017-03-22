@@ -784,7 +784,7 @@ void liv7(u_int len, const u_char *p) {
 
                 int int_packet_identifier = str2int16(packet_identifier);
 
-                myprintf("\t\tPacket identifier: %d\n", int_packet_identifier);
+                myprintf("\t\tMessage ID: %d\n", int_packet_identifier);
 
                 //Payload
                 index_buffer ++;
