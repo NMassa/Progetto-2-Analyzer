@@ -439,8 +439,6 @@ void liv7(u_int len, const u_char *p) {
 				}
 				myprintf("\n");
 
-
-				//TODO: Packet_ID è un campo che esiste solo se QoS è > 0..Dovrebbe andare
 				if(fh_qos > 0)
 				{
 					unsigned char pk_ID_msb[8];
@@ -754,7 +752,6 @@ void liv7(u_int len, const u_char *p) {
                 int int_req_qos = str2int2(req_qos);
                 myprintf("\t\tRequest QoS: %d\n",int_req_qos);
 
-				decoded =1;
 
 				break;
 			case 9:
@@ -951,18 +948,8 @@ void liv7(u_int len, const u_char *p) {
 
 				break;
 		}
-/*
-		for (i = 1; i <= len; i++) {
-			if (isprint(*p))myprintf("%c", *p);
-			else myprintf(".");
-			if (isascii(*p))fprintf(mem, "%c", *p);
-			else fprintf(mem, ".");
-			p++;
-			if ((i % 70) == 0)myprintf("\n     |");
-		}*/
 		myprintf("\n");
 		fflush(mem);
 		//decoded = 1;
-
 	}
 }
