@@ -752,6 +752,7 @@ void liv7(u_int len, const u_char *p) {
                 int int_req_qos = str2int2(req_qos);
                 myprintf("\t\tRequest QoS: %d\n",int_req_qos);
 
+				decoded = 1;
 
 				break;
 			case 9:
