@@ -84,6 +84,7 @@ void liv7(u_int len, const u_char *p) {
 		}
 		myprintf("\n");
 		fflush(mem);
+		decoded =1;
 	}else{
 		myprintf("MQTT\n");
 		myprintf("\tFixed Headers:\n");
@@ -334,6 +335,8 @@ void liv7(u_int len, const u_char *p) {
 					myprintf("\n");
 				}
 
+				//fflush(mem);
+				decoded = 1;
 
 				break;
 			case 2:
@@ -389,6 +392,8 @@ void liv7(u_int len, const u_char *p) {
 						break;
 				}
 
+				decoded = 1;
+
 				break;
 			case 3:
 				myprintf("\t\tDup: %d\n",dup);
@@ -422,12 +427,18 @@ void liv7(u_int len, const u_char *p) {
 				//topic name
 				int buff_offset = 5;
 				myprintf("\t\tTopic Name: ");
+				char topic[255];
 				for(int i = 0; i < var_h_length; i++)
 				{
 					myprintf("%c", *(p+buff_offset));
+
+					topic[i]= *(p+buff_offset);
+
 					buff_offset++;
+
 				}
 				myprintf("\n");
+
 
 				//TODO: Packet_ID è un campo che esiste solo se QoS è > 0..Dovrebbe andare
 				if(fh_qos > 0)
@@ -450,15 +461,27 @@ void liv7(u_int len, const u_char *p) {
 					int pk_ID = str2int16(pk_ID_length);
 
 					myprintf("\t\tPacket_ID: %d\n", pk_ID);
+
+
 				}
 
 				//Stampo il Payload
+
+
 				myprintf("\t\tPayload: ");
 				for(int i = buff_offset; i <=len; i++)
 				{
 					myprintf("%c", *(p + buff_offset));
 					buff_offset ++;
 				}
+				//stringa_topic[jj] = '\0';
+
+				if(strncmp(filt_mqtt->topic,topic, sizeof(var_h_length)) != 0){
+					decoded = 0;
+					//break;
+				}
+				else {decoded =1;}
+
 
 				break;
 
@@ -489,6 +512,7 @@ void liv7(u_int len, const u_char *p) {
 
                 myprintf("\t\tPacket ID ACK: %d", pk_AK);
 
+				decoded =1;
 				break;
 
             case 5:
@@ -518,6 +542,8 @@ void liv7(u_int len, const u_char *p) {
 
                 myprintf("\t\tPacket ID REC: %d", pk_REC);
 
+				decoded = 1;
+
 				break;
 			case 6:
 				myprintf("\t\tDup: %d\n",dup);
@@ -546,6 +572,8 @@ void liv7(u_int len, const u_char *p) {
 
                 myprintf("\t\tPacket ID REL: %d", pk_REL);
 
+				decoded = 1;
+
 				break;
 			case 7:
 				myprintf("\t\tDup: %d (Not Used)\n",dup);
@@ -573,6 +601,9 @@ void liv7(u_int len, const u_char *p) {
                 int pk_COMP = str2int16(p_COMP_length);
 
                 myprintf("\t\tPacket ID COMP: %d", pk_COMP);
+
+
+				decoded = 1;
 
 				break;
 
@@ -701,6 +732,7 @@ void liv7(u_int len, const u_char *p) {
                 int int_req_qos = str2int2(req_qos);
                 myprintf("\t\tRequest QoS: %d\n",int_req_qos);
 
+				decoded =1;
 
 				break;
 			case 9:
@@ -751,6 +783,8 @@ void liv7(u_int len, const u_char *p) {
                     int int_code_QoS = str2int2(code_QoS);
                     myprintf("\t\treturn code: %d -> Success\n", int_code_QoS);
                 }
+
+				decoded =1;
 
 				break;
 
@@ -809,6 +843,9 @@ void liv7(u_int len, const u_char *p) {
                         buffer++;
                     }
                 }
+
+                decoded = 1;
+
 				break;
 
 			case 11:
@@ -839,7 +876,9 @@ void liv7(u_int len, const u_char *p) {
 
                 myprintf("\t\tUNSUBACK ID: %d", USB_ACK);
 
-                break;
+				decoded =1;
+
+				break;
 			case 12:
 				myprintf("\t\tDup: %d (Not Used)\n",dup);
 				myprintf("\t\tQoS: %d (Not Used)\n",fh_qos);
@@ -850,6 +889,7 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t|   PINGREQ   |\n");
 				myprintf("\t---------------\n");
 
+                decoded = 1;
 				break;
 			case 13:
 				myprintf("\t\tDup: %d (Not Used)\n",dup);
@@ -861,6 +901,8 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t----------------\n");
 				myprintf("\t|   PINGRESP   |\n");
 				myprintf("\t----------------\n");
+
+                decoded = 1;
 				break;
 			case 14:
 				myprintf("\t\tDup: %d (Not Used)\n",dup);
@@ -871,12 +913,20 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t------------------\n");
 				myprintf("\t|   DISCONNECT   |\n");
 				myprintf("\t------------------\n");
-				break;
+
+                decoded = 1;
+                break;
 			case 15:
 				myprintf("\tRESERVED\n");
+
+				decoded = 1;
+
 				break;
 			default:
 				myprintf("\tUNKNOWN CONTROL PACKET TYPE\n");
+
+				decoded = 1;
+
 				break;
 		}
 /*
@@ -890,6 +940,7 @@ void liv7(u_int len, const u_char *p) {
 		}*/
 		myprintf("\n");
 		fflush(mem);
-		decoded = 1;
+		//decoded = 1;
+
 	}
 }
