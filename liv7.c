@@ -84,6 +84,7 @@ void liv7(u_int len, const u_char *p) {
 		}
 		myprintf("\n");
 		fflush(mem);
+		decoded =1;
 	}else{
 		myprintf("MQTT\n");
 		myprintf("\tFixed Headers:\n");
@@ -94,10 +95,9 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\tRESERVED\n");
 				break;
 			case 1:
-				myprintf("\t\tReserved: %d\n",dup);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
-				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\t\tDup: %d (Not Used)\n",dup);
+				myprintf("\t\tQoS: %d (Not Used)\n",fh_qos);
+				myprintf("\t\tRetain: %d (Not Used)\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
 
 				myprintf("\t---------------\n");
@@ -335,13 +335,14 @@ void liv7(u_int len, const u_char *p) {
 					myprintf("\n");
 				}
 
+				//fflush(mem);
+				decoded = 1;
 
 				break;
 			case 2:
-				myprintf("\t\tReserved: %d\n",dup);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
-				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\t\tDup: %d (Not Used)\n",dup);
+				myprintf("\t\tQoS: %d (Not Used)\n",fh_qos);
+				myprintf("\t\tRetain: %d (Not Used)\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
 
 				myprintf("\t---------------\n");
@@ -391,6 +392,8 @@ void liv7(u_int len, const u_char *p) {
 						break;
 				}
 
+				decoded = 1;
+
 				break;
 			case 3:
 				myprintf("\t\tDup: %d\n",dup);
@@ -401,7 +404,6 @@ void liv7(u_int len, const u_char *p) {
 				myprintf("\t---------------\n");
 				myprintf("\t|   PUBLISH   |\n");
 				myprintf("\t---------------\n");
-
 
 				(*p--);
 
@@ -425,10 +427,15 @@ void liv7(u_int len, const u_char *p) {
 				//topic name
 				int buff_offset = 5;
 				myprintf("\t\tTopic Name: ");
+				char topic[255];
 				for(int i = 0; i < var_h_length; i++)
 				{
 					myprintf("%c", *(p+buff_offset));
+
+					topic[i]= *(p+buff_offset);
+
 					buff_offset++;
+
 				}
 				myprintf("\n");
 
@@ -452,23 +459,34 @@ void liv7(u_int len, const u_char *p) {
 					int pk_ID = str2int16(pk_ID_length);
 
 					myprintf("\t\tPacket_ID: %d\n", pk_ID);
+
+
 				}
 
 				//Stampo il Payload
+
+
 				myprintf("\t\tPayload: ");
 				for(int i = buff_offset; i <=len; i++)
 				{
 					myprintf("%c", *(p + buff_offset));
 					buff_offset ++;
 				}
+				//stringa_topic[jj] = '\0';
+
+				if(strncmp(filt_mqtt->topic,topic, sizeof(var_h_length)) != 0){
+					decoded = 0;
+					//break;
+				}
+				else {decoded =1;}
+
 
 				break;
 
 			case 4:
-				myprintf("\t\tReserved: %d\n",dup);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
-				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\t\tDup: %d (Not Used)\n",dup);
+				myprintf("\t\tQoS: %d (Not Used)\n",fh_qos);
+				myprintf("\t\tRetain: %d (Not Used)\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
 
 				myprintf("\t--------------\n");
@@ -492,13 +510,13 @@ void liv7(u_int len, const u_char *p) {
 
                 myprintf("\t\tPacket ID ACK: %d", pk_AK);
 
+				decoded =1;
 				break;
 
             case 5:
-				myprintf("\t\tReserved: %d\n",dup);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
-				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\t\tDup: %d (Not Used)\n",dup);
+				myprintf("\t\tQoS: %d (Not Used)\n",fh_qos);
+				myprintf("\t\tRetain: %d (Not Used)\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
 
 				myprintf("\t--------------\n");
@@ -522,12 +540,13 @@ void liv7(u_int len, const u_char *p) {
 
                 myprintf("\t\tPacket ID REC: %d", pk_REC);
 
+				decoded = 1;
+
 				break;
 			case 6:
-				myprintf("\t\tReserved: %d\n",dup);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
-				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\t\tDup: %d\n",dup);
+				myprintf("\t\tQoS: %d\n",fh_qos);
+				myprintf("\t\tRetain: %d (Not Used)\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
 
 				myprintf("\t--------------\n");
@@ -551,12 +570,13 @@ void liv7(u_int len, const u_char *p) {
 
                 myprintf("\t\tPacket ID REL: %d", pk_REL);
 
+				decoded = 1;
+
 				break;
 			case 7:
-				myprintf("\t\tReserved: %d\n",dup);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
-				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\t\tDup: %d (Not Used)\n",dup);
+				myprintf("\t\tQoS: %d (Not Used)\n",fh_qos);
+				myprintf("\t\tRetain: %d (Not Used)\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
 
 				myprintf("\t---------------\n");
@@ -580,12 +600,15 @@ void liv7(u_int len, const u_char *p) {
 
                 myprintf("\t\tPacket ID COMP: %d", pk_COMP);
 
+
+				decoded = 1;
+
 				break;
 
             case 8:
                 myprintf("\t\tDup: %d\n",dup);
                 myprintf("\t\tQoS: %d\n",fh_qos);
-                myprintf("\t\tRetain: %d\n",retain);
+                myprintf("\t\tRetain: %d (Not Used)\n",retain);
 				myprintf("\tRemaininig length: %d\n", remaining_length);
 
 				myprintf("\t-----------------\n");
@@ -711,10 +734,9 @@ void liv7(u_int len, const u_char *p) {
 				break;
 			case 9:
                 //Fixed Header
-				myprintf("\t\tReserved: %d\n",dup);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
-				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\t\tDup: %d (Not Used)\n",dup);
+				myprintf("\t\tQoS: %d (Not Used)\n",fh_qos);
+				myprintf("\t\tRetain: %d (Not Used)\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
 
 				myprintf("\t--------------\n");
@@ -759,13 +781,14 @@ void liv7(u_int len, const u_char *p) {
                     myprintf("\t\treturn code: %d -> Success\n", int_code_QoS);
                 }
 
+				decoded =1;
+
 				break;
 
 			case 10:
-				myprintf("\t\tReserved: %d\n",dup);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
-				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\t\tDup: %d\n",dup);
+				myprintf("\t\tQoS: %d\n",fh_qos);
+				myprintf("\t\tRetain: %d (Not Used)\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
 
 				myprintf("\t-------------------\n");
@@ -817,13 +840,15 @@ void liv7(u_int len, const u_char *p) {
                         buffer++;
                     }
                 }
+
+                decoded = 1;
+
 				break;
 
 			case 11:
-				myprintf("\t\tReserved: %d\n",dup);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
-				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\t\tDup: %d (Not Used)\n",dup);
+				myprintf("\t\tQoS: %d (Not Used)\n",fh_qos);
+				myprintf("\t\tRetain: %d (Not Used)\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
 
 				myprintf("\t----------------\n");
@@ -841,54 +866,64 @@ void liv7(u_int len, const u_char *p) {
                 reverse_array(USB_ACK_msb,sizeof(USB_ACK_msb));
                 reverse_array(USB_ACK_lsb,sizeof(USB_ACK_lsb));
 
-                memcpy(USB_ACK_length,USB_ACK_msb, sizeof(USB_ACK_msb));
+                memcpy(USB_ACK_length,mess_ID_msb, sizeof(USB_ACK_msb));
                 memcpy(USB_ACK_length + 8,USB_ACK_lsb, sizeof(USB_ACK_lsb));
 
                 int USB_ACK = str2int16(USB_ACK_length);
 
                 myprintf("\t\tUNSUBACK ID: %d", USB_ACK);
 
-                break;
+				decoded =1;
+
+				break;
 			case 12:
-				myprintf("\t\tReserved: %d\n",dup);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
-				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\t\tDup: %d (Not Used)\n",dup);
+				myprintf("\t\tQoS: %d (Not Used)\n",fh_qos);
+				myprintf("\t\tRetain: %d (Not Used)\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
 
 				myprintf("\t---------------\n");
 				myprintf("\t|   PINGREQ   |\n");
 				myprintf("\t---------------\n");
 
+                decoded = 1;
 				break;
 			case 13:
-				myprintf("\t\tReserved: %d\n",dup);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
-				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\t\tDup: %d (Not Used)\n",dup);
+				myprintf("\t\tQoS: %d (Not Used)\n",fh_qos);
+				myprintf("\t\tRetain: %d (Not Used)\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
 
 
 				myprintf("\t----------------\n");
 				myprintf("\t|   PINGRESP   |\n");
 				myprintf("\t----------------\n");
+
+                decoded = 1;
 				break;
 			case 14:
-				myprintf("\t\tReserved: %d\n",dup);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[0]);
-				myprintf("\t\tReserved: %d\n",fh_qos_c[1]);
-				myprintf("\t\tReserved: %d\n",retain);
+				myprintf("\t\tDup: %d (Not Used)\n",dup);
+				myprintf("\t\tQoS: %d (Not Used)\n",fh_qos);
+				myprintf("\t\tRetain: %d (Not Used)\n",retain);
 				myprintf("\tRemaining length: %d\n", remaining_length);
 
 				myprintf("\t------------------\n");
 				myprintf("\t|   DISCONNECT   |\n");
 				myprintf("\t------------------\n");
-				break;
+
+                decoded = 1;
+                break;
 			case 15:
 				myprintf("\tRESERVED\n");
+
+				decoded = 1;
+
 				break;
 			default:
 				myprintf("\tUNKNOWN CONTROL PACKET TYPE\n");
+
+				decoded = 1;
+
 				break;
 		}
 /*
@@ -902,6 +937,7 @@ void liv7(u_int len, const u_char *p) {
 		}*/
 		myprintf("\n");
 		fflush(mem);
-		decoded = 1;
+		//decoded = 1;
+
 	}
 }

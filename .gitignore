@@ -63,3 +63,5 @@ util.o
 /path.h
 /analyzer.conf
 /general.conf
+analyzer.conf
+general.conf

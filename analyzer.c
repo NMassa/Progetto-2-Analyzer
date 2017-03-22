@@ -220,14 +220,14 @@ void main(int argc,char **argv){
                     if(aux_mqtt==NULL)exit(1); //c'è stato un disguido
                     if(aux1_mqtt==NULL)filt_mqtt=aux_mqtt; //se sono finiti i filtri finalizza assegnando a filt_mqtt
                     else aux1_mqtt->next=aux_mqtt; //altrimenti si aggiunge un altro filtro
-
+                    /*
                     if(aux_mqtt == '#' || aux_mqtt == '*') //se aux_mqtt è un multilevel wildcard
                        {while(aux_mqtt!=NULL)//finchè troviamo un topic andiamo a cercarne ed aggiungerne
                            {aux1_mqtt->next=aux_mqtt;}
                        //filt_mqtt=aux_mqtt; //se sono finiti i filtri finalizza assegnando a filt_mqtt
                        }
                     filt_mqtt=aux_mqtt; //se sono finiti i filtri finalizza assegnando a filt_mqtt
-
+                    */
                     // TODO: in questo modo legge il filtro come un'unica parola, in realtà i topic sono organizzati a livelli separati da /
                     // TODO: se c'è tempo bisognerebbe implementare il filtro multilivello come nel link sotto
                     // Vedere http://www.hivemq.com/blog/mqtt-essentials-part-5-mqtt-topics-best-practices
