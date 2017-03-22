@@ -32,7 +32,7 @@ void liv7(u_int len, const u_char *p) {
     int i;
 
     if ((int) len <= 0)return;
-    colore(5);
+    colore(6);
 
 	// Lettura Fixed Header
 	u_char fixed_header = *(p);
